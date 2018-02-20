@@ -314,6 +314,7 @@ On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 �
 					c3 = getCouleur(t,z,getDernierePiece(t,z))
 					if(c1 == c2 and c2 == c3):
 						victoire = True
+
 	def verifVictoire():
 		#Lignes horizontales :
 		checkLigne(0,0,1,0,2,0)
@@ -348,4 +349,4 @@ On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 �
 	print("Couleur de la deuxieme piece = ", getCouleur(posX,posY,1))
 	print("Taille de la premiere piece = ",getTaille(posX,posY,0))
 	print("Taille de la deuxieme piece = ", getTaille(posX,posY,1))"""
-    Mafenetre.mainloop()    
+	Mafenetre.mainloop()
