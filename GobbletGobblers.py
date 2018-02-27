@@ -54,7 +54,7 @@ class Bac_a_sable(Canvas):
 				Canevas.create_rectangle(_position.getPosition(), outline='black', fill=couleur2)
 			else :
 				self.itemconfig(self.selObject, width =1)
-				"""self.selObject =None"""
+				#self.selObject =None
 		
 				couleur=self.itemcget(self.selObject, "fill")
 				typeObjet=self.type(self.selObject)
@@ -72,7 +72,7 @@ class Bac_a_sable(Canvas):
 
 					#Centrer(self.selObject, whatCase(event.x , event.y),taille(coordonneesRectangle), getCouleurVoid() )
 
-					rempliPlateau( whatCase(event.x , event.y),getCouleurVoid() ,taille(coordonneesRectangle) )
+					setCase( whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle) )
 					""" On supprime un rec s'il s'agit d'un deplacement dans la grille"""	
 				else:
 					whatCase(event.x , event.y)
@@ -283,9 +283,6 @@ if __name__ == '__main__':
 	def setCase(cle, couleur, taille):
 		plateau[cle].append([couleur, taille])
 
-	def rempliPlateau(cle, couleur, taille):
-		setCase(cle, couleur, taille)
-
 	def affichePlateau():
 		global victoire
 		print("Contenu du plateau à cet instant : ")
@@ -298,9 +295,6 @@ if __name__ == '__main__':
 				print("Couleur de la derniere piece a la case = ", cle,":", getCouleur(cle,getDernierePiece(cle)))
 		verifVictoire()
 		print("Victoire ?", victoire)
-
-
-    	#Pour l'exemple on met des pièces oranges sur une diagonale (pour tester la fonction qui teste la condition de victoire)
         
 	def getCouleur(cle,numPiece):
 		global plateau
@@ -372,14 +366,12 @@ if __name__ == '__main__':
 		checkLigne(2,0,1,1,0,2)
     
 	""" On considère qu'on note le plateau de jeu dans un plan de cette façon (avec O représentant les cases)
-	 0 1 2 (X)
+	  0 1 2 (X)
 	0 O O O
 	1 O O O
 	2 O O O
 	(Y)"""
 
 	initPlateau()
-	#initExemple()
-
 	Mafenetre.mainloop()
 
