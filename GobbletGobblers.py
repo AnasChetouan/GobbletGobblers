@@ -74,6 +74,113 @@ class Bac_a_sable(Canvas):
 
 					setCase( whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle) )
 					""" On supprime un rec s'il s'agit d'un deplacement dans la grille"""	
+
+					if (whatCase(event.x , event.y)) == (0,0) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,55,55,95,95)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,36,37,116,117)
+							else :
+								Canevas.coords(self.selObject,36,47,116,107)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,26,27,126,127)
+
+					if (whatCase(event.x , event.y)) == (0,1) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,57,245,97,205)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,36,266,116,186)
+							else :
+								Canevas.coords(self.selObject,36,256,116,196)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,26,174,126,274)
+
+
+					if (whatCase(event.x , event.y)) == (0,2) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,57,394,97,354)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,36,414,116,334)
+							else :
+								Canevas.coords(self.selObject,36,404,116,344)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,26,324,126,424)
+
+
+					if (whatCase(event.x , event.y)) == (1,0) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,205,57,245,97)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,185,37,265,117)
+							else :
+								Canevas.coords(self.selObject,185,47,265,107)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,174,127,274,27)
+
+					if (whatCase(event.x , event.y)) == (1,1) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,205,205,245,245)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,185,187,265,267)
+							else :
+								Canevas.coords(self.selObject,185,197,265,257)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,174,174,273,274)
+
+
+					if (whatCase(event.x , event.y)) == (1,2) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,206,394,246,354)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,186,415,266,335)
+							else :
+								Canevas.coords(self.selObject,186,405,266,345)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,175,424,275,324)
+
+
+					if (whatCase(event.x , event.y)) == (2,0) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,406,99,366,59)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,424,119,344,39)
+							else :
+								Canevas.coords(self.selObject,424,109,344,49)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,434,127,334,27)
+
+
+					if (whatCase(event.x , event.y)) == (2,1) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,405,205,365,245)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,426,187,346,267)
+							else :
+								Canevas.coords(self.selObject,426,197,346,257)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,434,174,334,274)
+
+
+					if (whatCase(event.x , event.y)) == (2,2) :
+						if (taille(coordonneesRectangle)) == 1 :
+							Canevas.coords(self.selObject,405,394,365,354)
+						if (taille(coordonneesRectangle)) == 2 :
+							if (couleur2Int(getCouleurVoid())) == 2 :
+								Canevas.coords(self.selObject,426,415,346,335)
+							else :
+								Canevas.coords(self.selObject,426,405,346,345)
+						if (taille(coordonneesRectangle)) == 3 :
+							Canevas.coords(self.selObject,434,424,334,324)
+
+
 				else:
 					whatCase(event.x , event.y)
 			affichePlateau()
