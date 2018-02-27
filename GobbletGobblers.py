@@ -2,6 +2,7 @@
 # module: tkinter
 from tkinter import *
 from random import randrange
+
 class Position:
 	def __init__( self, var):
 		self.var=var
@@ -10,8 +11,8 @@ class Position:
 	def setPosition(self, _var):
 		 self.var= _var
 _position= Position(0)
+
 class Bac_a_sable(Canvas):
-	
 	"Canevas modifié pour prendre en compte quelques actions de la souris"
 	def __init__(self, boss, width=80, height=80, bg="white"):
 	# invocation du constructeur de la classe parente :
@@ -33,19 +34,20 @@ class Bac_a_sable(Canvas):
 		# <lift> fait passer le dessin à l'avant-plan :
 		self.lift(self.selObject)
 		whatCase(event.x , event.y)
+		if whatCase(event.x , event.y) !=(-1,-1):
+			deleteDernierePiece(whatCase(event.x , event.y))
 	def mouseMove(self, event):
 		"Op. à effectuer quand la souris se déplace, bouton gauche enfoncé"
 		x2, y2 = event.x, event.y
 		dx, dy = x2 -self.x1, y2 -self.y1
-		if self.selObject:
+		typeObjet=self.type(self.selObject)
+		if self.selObject  and  typeObjet== "rectangle"  :
 			self.move(self.selObject, dx, dy)
 			self.x1, self.y1 = x2, y2
 	def mouseUp(self, event):
 		"Op. à effectuer quand le bouton gauche de la souris est relâché"
 		if self.selObject :
-
-			
-			if canAdd(whatCase(event.x , event.y) )== False  :
+			if canAdd(whatCase(event.x , event.y), taille(self.coords(self.selObject)))== False  :
 				couleur2=self.itemcget(self.selObject, "fill")
 
 				Canevas.delete('Gobblet gobblers',self.selObject) 
@@ -58,8 +60,6 @@ class Bac_a_sable(Canvas):
 				typeObjet=self.type(self.selObject)
 
 				if typeObjet== "rectangle"  :
-			
-
 					def getCouleurVoid():
 						couleur =self.itemcget(self.selObject, "fill")
 						return couleur
@@ -69,15 +69,16 @@ class Bac_a_sable(Canvas):
 					couleur2Int(getCouleurVoid())
 					coordonneesRectangle = self.coords(self.selObject)
 					taille(coordonneesRectangle)
-					"""rempliPlateau(getCouleur(),getTaille())"""
+
+					#Centrer(self.selObject, whatCase(event.x , event.y),taille(coordonneesRectangle), getCouleurVoid() )
 
 					rempliPlateau( whatCase(event.x , event.y),getCouleurVoid() ,taille(coordonneesRectangle) )
-
+					""" On supprime un rec s'il s'agit d'un deplacement dans la grille"""	
 				else:
 					whatCase(event.x , event.y)
 			affichePlateau()
-
-
+			if victoire == True:
+				rejouer()
 
 def  couleur2Int(c):
 	couleurInt=0
@@ -86,8 +87,9 @@ def  couleur2Int(c):
 	else :
 		couleurInt=1
 	
-	print(" couleur=" ,couleurToString(couleurInt))
+	#print(" couleur=" ,couleurToString(couleurInt))
 	return couleurInt
+
 def taille( _taille):
 	tailleRrectangle=0
 	"""Rectangle bleu"""
@@ -100,12 +102,50 @@ def taille( _taille):
 			if _taille[2]-_taille[0] <=100 : 
 				tailleRrectangle=3
 	
-	print( "taille:", tailleToString(tailleRrectangle))
+	#print( "taille:", tailleToString(tailleRrectangle))
 	return tailleRrectangle
 
-																																																																																		
+
+"""def Centrer( Object, cle, taille,couleur):
+	if cle== (0,0) :
+		if taille==1:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(62,65,102,105, outline='black', fill=couleur)
+		if taille==2:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(33,52,113,132, outline='black', fill=couleur)
+		if taille==3:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(27,33,127,133, outline='black', fill=couleur)
+	
+	if cle== (1,0) :
+		if taille==1:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(201,65,241,105, outline='black', fill=couleur)
+		if taille==2:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(180,50,260,130, outline='black', fill=couleur)
+		if taille==3:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle( 172 ,  30,272,130, outline='black', fill=couleur)
+		
+		if cle== (2,0) :
+		if taille==1:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(201,65,241,105, outline='black', fill=couleur)
+		if taille==2:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle(183,54,263,134, outline='black', fill=couleur)
+		if taille==3:
+			Canevas.delete('Gobblet gobblers',Object) 
+			Canevas.create_rectangle( 172 ,  30,272,130, outline='black', fill=couleur)
+
+"""
+
+																																																																																																																																																																			
 def teste(a,b):
 	print("Case (" , a ,", " , b,")")
+
 def whatCase(a,b):
 	if a<149 :
 		if b<169:
@@ -138,24 +178,22 @@ def whatCase(a,b):
 			a,b=2,2
 	"""a ou b hors de la grille"""
 	if a<3:
-		teste(a,b)			
+		"""teste(a,b)	"""		
 		return a,b
+	
 	else :
 		return -1,-1
-
 
 
 if __name__ == '__main__':
 # ---- Programme de test ----
 	Mafenetre = Tk()
-	Mafenetre.title('Gobblet gobblers')
+	Mafenetre.title('GobbletGobblers')
 	Mafenetre.geometry('800x700+400+300')# mise en place du canevas 
 	Largeur = 780
 	Hauteur = 550
 
 	Canevas =Bac_a_sable(Mafenetre, width =Largeur, height =Hauteur, bg ='ivory')
-
-
 
 	Canevas.pack(padx =5, pady =5)
 	def affiche():
@@ -172,8 +210,8 @@ if __name__ == '__main__':
 		Canevas.create_rectangle(600, 280, 640, 320, outline='black', fill='red')
 		Canevas.create_rectangle(550, 280, 590, 320, outline='black', fill='red')
 
-		Canevas.create_rectangle(500, 330, 580, 410, outline='black', fill='red')	
-		Canevas.create_rectangle(590, 330, 670, 410, outline='black', fill='red')
+		Canevas.create_rectangle(500, 330, 580, 390, outline='black', fill='red')	
+		Canevas.create_rectangle(590, 330, 670, 390, outline='black', fill='red')
 
 		Canevas.create_rectangle(480, 420, 580, 520, outline='black', fill='red')
 		Canevas.create_rectangle(590, 420, 690, 520, outline='black', fill='red')
@@ -192,41 +230,40 @@ if __name__ == '__main__':
 	def Effacer():
 		Canevas.delete(ALL)
 	def rejouer():
+		global victoire
 		Effacer()
+		initPlateau() #On refait un nouveau plateau
+		victoire = False #On ré-initialise la variable de victoire pour la prochaine partie
 		affiche()
+
 	bouton=Button(Mafenetre, text="Fermer", command=Mafenetre.quit)
 	bouton.pack()
 
 	bouton=Button(Mafenetre, text="rejouer", command= rejouer)
 	bouton.pack()
 
-
-
-
-
-
 	"""
-Structure de données pour le projet Gobblet Gobblers
-____________________________________________________
-Représentation des couleurs:
-1 = bleu
-2 = rouge_è_
-Représentation des tailles:
-1 = petit
-2 = moyen
-3 = grand
-Représentation des pièces:
-Une pièce = une liste sous la forme [numCouleur,numTaille]
-ex : petite pièce bleue = [1,1]
-Représentation des cases du plateau:
-Une case du plateau de coordonnée (x,y) = un élément du dictionnaire plateau avec une clé (x,y)
-Chaque case du plateau est une liste
-On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 à 2 de la plus petite pièce à la plus grande
-"""
+	Structure de données pour le projet Gobblet Gobblers
+	____________________________________________________
+	Représentation des couleurs:
+	1 = bleu
+	2 = rouge
+	Représentation des tailles:
+	1 = petit
+	2 = moyen
+	3 = grand
+	Représentation des pièces:
+	Une pièce = une liste sous la forme [numCouleur,numTaille]
+	ex : petite pièce bleue = [1,1]
+	Représentation des cases du plateau:
+	Une case du plateau de coordonnée (x,y) = un élément du dictionnaire plateau avec une clé (x,y)
+	Chaque case du plateau est une liste
+	On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 à 2 de la plus petite pièce à la plus grande
+	"""
 
 	plateau = {}
-	#dictionnaire
 	victoire = False
+	#dictionnaire
 
 	def initPlateau():
 		global plateau
@@ -235,35 +272,34 @@ On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 �
 			for j in list(coordonnees):
 					plateau[(int(i),int(j))] = []
 
-	def getCase(a,b):
+	def getCase(cle):
 		global plateau
 		coordonnees = '012'
 		for i in list(coordonnees):
 			for j in list(coordonnees):
 					if a==i and b==j:
-						return plateau[(int(i),int(j))]
+						return plateau[(int(cle))]
 	
 	def setCase(cle, couleur, taille):
 		plateau[cle].append([couleur, taille])
+
 	def rempliPlateau(cle, couleur, taille):
-		
 		setCase(cle, couleur, taille)
 
-
 	def affichePlateau():
+		global victoire
+		print("Contenu du plateau à cet instant : ")
+		print("__________________________________ ")
 		for cle in plateau.keys():
 			print("Nombre de pieces a la case = ",cle,":",getNbPieces(cle))
-			print("Couleur de la deuxieme piece = ", getDernierePiece(cle))
-	def initExemple():
-		global plateau
-		petiteCaseBleue = [1,1]
-		moyenCaseBleue = [1,2]
-		"""grandeCaseOrange = rempliPlateau(,y)
-		plateau[(0,0)].append(petiteCaseBleue)
-		plateau[(0,0)].append(grandeCaseOrange)
-		plateau[(0,0)].append(moyenCaseBleue)
-		plateau[(1,1)].append(grandeCaseOrange)
-		plateau[(2,2)].append(grandeCaseOrange)"""
+			#print("Couleur de la deuxieme piece = ", getDernierePiece(cle))
+			if getNbPieces(cle) > 0 :
+				print("Taille de la premiere piece a la case = ", cle,":",getTaille(cle,0))
+				print("Couleur de la derniere piece a la case = ", cle,":", getCouleur(cle,getDernierePiece(cle)))
+		verifVictoire()
+		print("Victoire ?", victoire)
+
+
     	#Pour l'exemple on met des pièces oranges sur une diagonale (pour tester la fonction qui teste la condition de victoire)
         
 	def getCouleur(cle,numPiece):
@@ -277,19 +313,26 @@ On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 �
 	def getNbPieces(cle):
 		global plateau
 		return len(plateau[cle])
-	def canAdd(cle):
-		if getNbPieces(cle) < 3 :
+
+	def canAdd(cle, tailleCourante):
+		if cle == (-1,-1) :
+			return False
+		if getNbPieces(cle) == 0 :
 			return True
+		if getNbPieces(cle) < 3 :
+			if tailleCourante > getTaille(cle,getDernierePiece(cle)) :
+				return True
+			else :
+				return False
 		else :
 			return False
+
 	def getDernierePiece(cle):
 		return getNbPieces(cle)-1
 
-	def peutDeposer(cle , tailleCourante):
-		if getTaille(cle, 1) < tailleCourante :
-			return True
-		else:
-			return False
+	def deleteDernierePiece(cle):
+		plateau[cle] = plateau[cle][:getNbPieces(cle)-1]
+				
 	def tailleToString(x):
 		if x == 1:
 			return "petite"
@@ -303,15 +346,15 @@ On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 �
 			return "bleue"
 		elif x == 2:
 			return "orange"
-			"""
+			
 	def checkLigne(x,y,u,v,t,z):
 		global victoire
-		if(getNbPieces(x,y) > 0):
-			c1 = getCouleur(x,y,getDernierePiece(x,y))
-			if(getNbPieces(u,v) > 0):
-				c2 = getCouleur(u,v,getDernierePiece(u,v))
-				if(getNbPieces(t,z) > 0):
-					c3 = getCouleur(t,z,getDernierePiece(t,z))
+		if(getNbPieces((x,y)) > 0):
+			c1 = getCouleur((x,y),getDernierePiece((x,y)))
+			if(getNbPieces((u,v)) > 0):
+				c2 = getCouleur((u,v),getDernierePiece((u,v)))
+				if(getNbPieces((t,z)) > 0):
+					c3 = getCouleur((t,z),getDernierePiece((t,z)))
 					if(c1 == c2 and c2 == c3):
 						victoire = True
 
@@ -326,27 +369,17 @@ On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 �
 		checkLigne(2,0,2,1,2,2)
 		#Diagonales :
 		checkLigne(0,0,1,1,2,2)
-		checkLigne(2,0,1,1,0,2)"""
+		checkLigne(2,0,1,1,0,2)
     
 	""" On considère qu'on note le plateau de jeu dans un plan de cette façon (avec O représentant les cases)
 	 0 1 2 (X)
 	0 O O O
-    1 O O O
-    2 O O O
-    (Y)"""
+	1 O O O
+	2 O O O
+	(Y)"""
+
 	initPlateau()
-	initExemple()
-	"""verifVictoire()"""
-	print("Victoire ?",victoire)
+	#initExemple()
 
-
-	"""posX = int(input("Entrez une position X : "))
-	posY = int(input("Entrez une position Y : "))
-	#taper 0,0 pour l'exemple
-           
-	print("Nombre de pieces a cette case = ",getNbPieces(posX,posY))
-	print("Couleur de la premiere piece = ",getCouleur(posX,posY,0))
-	print("Couleur de la deuxieme piece = ", getCouleur(posX,posY,1))
-	print("Taille de la premiere piece = ",getTaille(posX,posY,0))
-	print("Taille de la deuxieme piece = ", getTaille(posX,posY,1))"""
 	Mafenetre.mainloop()
+
