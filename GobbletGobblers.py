@@ -2,7 +2,10 @@
 # module: tkinter
 from tkinter import *
 from random import randrange
-
+global coupsJ1,coupsJ2, gagnant
+coupsJ2=0
+coupsJ1=0
+gagnant="personne"
 class Position:
 	def __init__( self, var):
 		self.var=var
@@ -12,6 +15,26 @@ class Position:
 		 self.var= _var
 _position= Position(0)
 
+global couleurJoueur
+couleurJoueur='blue'
+
+global tourJoueur
+tourJoueur='Joueur 1'
+
+def changerTourJoueur(couleurJoueur):
+	global tourJoueur
+	if couleurJoueur=='blue':
+		tourJoueur='Joueur 1'
+	else:
+		tourJoueur='Joueur 2'
+
+def changerCouleur():
+	global couleurJoueur
+	if couleurJoueur=='blue' :
+		couleurJoueur='red'
+	else :
+		couleurJoueur='blue'
+		
 class Bac_a_sable(Canvas):
 	"Canevas modifié pour prendre en compte quelques actions de la souris"
 	def __init__(self, boss, width=80, height=80, bg="white"):
@@ -21,6 +44,7 @@ class Bac_a_sable(Canvas):
 		self.bind("<Button-1>", self.mouseDown)
 		self.bind("<Button1-Motion>", self.mouseMove)
 		self.bind("<Button1-ButtonRelease>", self.mouseUp)
+
 	def mouseDown(self, event):
 		"Opération à effectuer quand le bouton gauche de la souris est enfoncé"
 		self.currObject =None
@@ -28,61 +52,63 @@ class Bac_a_sable(Canvas):
 		self.x1, self.y1 = event.x, event.y
 		# <find_closest> renvoie la référence du dessin le plus proche :
 		self.selObject = self.find_closest(self.x1, self.y1)
-		# modification de l'épaisseur du contour du dessin :
-		_position.setPosition(self.coords(self.selObject))
-		self.itemconfig(self.selObject, width =3)
-		# <lift> fait passer le dessin à l'avant-plan :
-		self.lift(self.selObject)
-		whatCase(event.x , event.y)
-		if whatCase(event.x , event.y) !=(-1,-1):
-			deleteDernierePiece(whatCase(event.x , event.y))
+		
+		if (couleurJoueur==self.itemcget(self.selObject, "fill") ) :		
+			# modification de l'épaisseur du contour du dessin 
+			_position.setPosition(self.coords(self.selObject))
+			self.itemconfig(self.selObject, width =3)
+			# <lift> fait passer le dessin à l'avant-plan :
+			self.lift(self.selObject)
+			whatCase(event.x , event.y)
+			if whatCase(event.x , event.y) !=(-1,-1):
+					deleteDernierePiece(whatCase(event.x , event.y))
+			
 	def mouseMove(self, event):
-		"Op. à effectuer quand la souris se déplace, bouton gauche enfoncé"
-		x2, y2 = event.x, event.y
-		dx, dy = x2 -self.x1, y2 -self.y1
-		typeObjet=self.type(self.selObject)
-		if self.selObject  and  typeObjet== "rectangle"  :
-			self.move(self.selObject, dx, dy)
-			self.x1, self.y1 = x2, y2
+		if (couleurJoueur==self.itemcget(self.selObject, "fill") ) :
+			"Op. à effectuer quand la souris se déplace, bouton gauche enfoncé"
+			x2, y2 = event.x, event.y
+			dx, dy = x2 -self.x1, y2 -self.y1
+			typeObjet=self.type(self.selObject)
+			if self.selObject  and  typeObjet== "rectangle"  :
+				self.move(self.selObject, dx, dy)
+				self.x1, self.y1 = x2, y2
 	def mouseUp(self, event):
 		"Op. à effectuer quand le bouton gauche de la souris est relâché"
-		if self.selObject :
-			if canAdd(whatCase(event.x , event.y), taille(self.coords(self.selObject)))== False  :
-				couleur2=self.itemcget(self.selObject, "fill")
-
-				Canevas.delete('Gobblet gobblers',self.selObject) 
-				Canevas.create_rectangle(_position.getPosition(), outline='black', fill=couleur2)
-			else :
-				self.itemconfig(self.selObject, width =1)
+		if (couleurJoueur==self.itemcget(self.selObject, "fill") ) :
+			if self.selObject :
+				if canAdd(whatCase(event.x , event.y), taille(self.coords(self.selObject)))== False  :
+					couleur2=self.itemcget(self.selObject, "fill")
+	
+					Canevas.delete('Gobblet gobblers',self.selObject) 
+					Canevas.create_rectangle(_position.getPosition(), outline='black', fill=couleur2)
+				else :
+					self.itemconfig(self.selObject, width =1)
 				#self.selObject =None
 		
-				couleur=self.itemcget(self.selObject, "fill")
-				typeObjet=self.type(self.selObject)
+					couleur=self.itemcget(self.selObject, "fill")
+					typeObjet=self.type(self.selObject)
 
-				if typeObjet== "rectangle"  :
-					def getCouleurVoid():
-						couleur =self.itemcget(self.selObject, "fill")
-						return couleur
-					def getTailleVoid():
-						taille=taille(coordonneesRectangle)
-						return taille
-					couleur2Int(getCouleurVoid())
-					coordonneesRectangle = self.coords(self.selObject)
-					taille(coordonneesRectangle)
+					if typeObjet== "rectangle"  :
+						def getCouleurVoid():
+							couleur =self.itemcget(self.selObject, "fill")
+							return couleur
+						def getTailleVoid():
+							taille=taille(coordonneesRectangle)
+							return taille
+						couleur2Int(getCouleurVoid())
+						coordonneesRectangle = self.coords(self.selObject)
+						taille(coordonneesRectangle)
 
 					#Centrer(self.selObject, whatCase(event.x , event.y),taille(coordonneesRectangle), getCouleurVoid() )
 
-					setCase( whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle) )
+						setCase( whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle) )
 					""" On supprime un rec s'il s'agit d'un deplacement dans la grille"""	
 
 					if (whatCase(event.x , event.y)) == (0,0) :
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,55,55,95,95)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,36,37,116,117)
-							else :
-								Canevas.coords(self.selObject,36,47,116,107)
+							Canevas.coords(self.selObject,36,37,116,117)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,26,27,126,127)
 
@@ -90,10 +116,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,57,245,97,205)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,36,266,116,186)
-							else :
-								Canevas.coords(self.selObject,36,256,116,196)
+							Canevas.coords(self.selObject,36,266,116,186)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,26,174,126,274)
 
@@ -102,10 +125,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,57,394,97,354)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,36,414,116,334)
-							else :
-								Canevas.coords(self.selObject,36,404,116,344)
+							Canevas.coords(self.selObject,36,414,116,334)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,26,324,126,424)
 
@@ -114,10 +134,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,205,57,245,97)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,185,37,265,117)
-							else :
-								Canevas.coords(self.selObject,185,47,265,107)
+							Canevas.coords(self.selObject,185,37,265,117)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,174,127,274,27)
 
@@ -125,10 +142,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,205,205,245,245)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,185,187,265,267)
-							else :
-								Canevas.coords(self.selObject,185,197,265,257)
+							Canevas.coords(self.selObject,185,187,265,267)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,174,174,273,274)
 
@@ -137,10 +151,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,206,394,246,354)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,186,415,266,335)
-							else :
-								Canevas.coords(self.selObject,186,405,266,345)
+							Canevas.coords(self.selObject,186,415,266,335)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,175,424,275,324)
 
@@ -149,10 +160,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,406,99,366,59)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,424,119,344,39)
-							else :
-								Canevas.coords(self.selObject,424,109,344,49)
+							Canevas.coords(self.selObject,424,119,344,39)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,434,127,334,27)
 
@@ -161,10 +169,7 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,405,205,365,245)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,426,187,346,267)
-							else :
-								Canevas.coords(self.selObject,426,197,346,257)
+							Canevas.coords(self.selObject,426,187,346,267)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,434,174,334,274)
 
@@ -173,20 +178,34 @@ class Bac_a_sable(Canvas):
 						if (taille(coordonneesRectangle)) == 1 :
 							Canevas.coords(self.selObject,405,394,365,354)
 						if (taille(coordonneesRectangle)) == 2 :
-							if (couleur2Int(getCouleurVoid())) == 2 :
-								Canevas.coords(self.selObject,426,415,346,335)
-							else :
-								Canevas.coords(self.selObject,426,405,346,345)
+							Canevas.coords(self.selObject,426,415,346,335)
 						if (taille(coordonneesRectangle)) == 3 :
 							Canevas.coords(self.selObject,434,424,334,324)
+					verifVictoire()
+					changerCouleur()
+					changerTourJoueur(couleurJoueur)
+					modifJoueur()
 
-
-				else:
-					whatCase(event.x , event.y)
+					
+			else:
+				whatCase(event.x , event.y)
 			affichePlateau()
 			if victoire == True:
 				rejouer()
 
+def nbCoups(couleur):
+	global coupsJ1,coupsJ2
+	if couleur=="red":
+		coupsJ2= coupsJ2+1
+	else :
+		coupsJ1=coupsJ1+1
+	print("gagnant ",  gagnant)
+def afficheScore():
+	global  gagnant
+	if gagnant=='red':
+		print("Le joueur rouge gagne la partie avec ", coupsJ2 , " déplacements")
+	else:
+		print("Le joueur bleu gagne la partie avec ", coupsJ1 , " déplacements")
 def  couleur2Int(c):
 	couleurInt=0
 	if c=="red":
@@ -199,7 +218,7 @@ def  couleur2Int(c):
 
 def taille( _taille):
 	tailleRrectangle=0
-	"""Rectangle bleu"""
+
 	if _taille[2]-_taille[0] <=40 : 
 		tailleRrectangle=1
 	else:
@@ -303,25 +322,25 @@ if __name__ == '__main__':
 	Canevas =Bac_a_sable(Mafenetre, width =Largeur, height =Hauteur, bg ='ivory')
 
 	Canevas.pack(padx =5, pady =5)
+	i=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
 	def affiche():
-		Canevas.create_rectangle(600, 40, 640, 80, outline='black', fill='blue')
-		Canevas.create_rectangle(550, 40, 590, 80, outline='black', fill='blue')
+		Canevas.create_rectangle(560, 20, 600, 60, outline='black', fill='blue')
+		Canevas.create_rectangle(620, 20, 660, 60, outline='black', fill='blue')
 
-		Canevas.create_rectangle(500, 90, 580, 150, outline='black', fill='blue')
-		Canevas.create_rectangle(590, 90, 670, 150, outline='black', fill='blue')
+		Canevas.create_rectangle(520, 80, 600, 160, outline='black', fill='blue')
+		Canevas.create_rectangle(620, 80, 700, 160, outline='black', fill='blue')
 			
-		Canevas.create_rectangle(480, 170, 580, 270, outline='black', fill='blue')
-		Canevas.create_rectangle(590, 170, 690, 270, outline='black', fill='blue')
+		Canevas.create_rectangle(500, 180, 600, 280, outline='black', fill='blue')
+		Canevas.create_rectangle(620, 180, 720, 280, outline='black', fill='blue')
 
+		Canevas.create_rectangle(560, 300, 600, 340, outline='black', fill='red')
+		Canevas.create_rectangle(620, 300, 660, 340, outline='black', fill='red')
 
-		Canevas.create_rectangle(600, 280, 640, 320, outline='black', fill='red')
-		Canevas.create_rectangle(550, 280, 590, 320, outline='black', fill='red')
+		Canevas.create_rectangle(520, 360, 600, 440, outline='black', fill='red')	
+		Canevas.create_rectangle(620, 360, 700, 440, outline='black', fill='red')
 
-		Canevas.create_rectangle(500, 330, 580, 390, outline='black', fill='red')	
-		Canevas.create_rectangle(590, 330, 670, 390, outline='black', fill='red')
-
-		Canevas.create_rectangle(480, 420, 580, 520, outline='black', fill='red')
-		Canevas.create_rectangle(590, 420, 690, 520, outline='black', fill='red')
+		Canevas.create_rectangle(500, 460, 600, 560, outline='black', fill='red')
+		Canevas.create_rectangle(620, 460, 720, 560, outline='black', fill='red')
 
 
 		Canevas.create_line(5,5,5,450)
@@ -333,7 +352,19 @@ if __name__ == '__main__':
 		Canevas.create_line(5,450,470,450)
 		Canevas.create_line(5,300,470,300)
 		Canevas.create_line(5,150,470,150)
+		
+		
+		
+	
+		
 	affiche()
+	
+	
+	def modifJoueur():
+		global i
+		Canevas.delete(i)
+		i=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
+	
 	def Effacer():
 		Canevas.delete(ALL)
 	def rejouer():
@@ -346,7 +377,7 @@ if __name__ == '__main__':
 	bouton=Button(Mafenetre, text="Fermer", command=Mafenetre.quit)
 	bouton.pack()
 
-	bouton=Button(Mafenetre, text="rejouer", command= rejouer)
+	bouton=Button(Mafenetre, text="Rejouer", command= rejouer)
 	bouton.pack()
 
 	"""
@@ -450,6 +481,7 @@ if __name__ == '__main__':
 			
 	def checkLigne(x,y,u,v,t,z):
 		global victoire
+		global gagnant
 		if(getNbPieces((x,y)) > 0):
 			c1 = getCouleur((x,y),getDernierePiece((x,y)))
 			if(getNbPieces((u,v)) > 0):
@@ -458,6 +490,7 @@ if __name__ == '__main__':
 					c3 = getCouleur((t,z),getDernierePiece((t,z)))
 					if(c1 == c2 and c2 == c3):
 						victoire = True
+						gagnant=c1
 
 	def verifVictoire():
 		#Lignes horizontales :
