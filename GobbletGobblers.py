@@ -2,10 +2,35 @@
 # module: tkinter
 from tkinter import *
 from random import randrange
+import time
+
 global coupsJ1,coupsJ2, gagnant
 coupsJ2=0
 coupsJ1=0
 gagnant="personne"
+listePiecesIA = []
+
+mode = 1 
+
+plateau = {}
+
+def initialiserListeIA():
+	petitePieceRouge = [2,1]
+	moyennePieceRouge = [2,2]
+	grandePieceRouge = [2,3]
+
+	global listePiecesIA
+	listePiecesIA.append(petitePieceRouge)
+	listePiecesIA.append(petitePieceRouge)
+	listePiecesIA.append(moyennePieceRouge)
+	listePiecesIA.append(moyennePieceRouge)
+	listePiecesIA.append(grandePieceRouge)
+	listePiecesIA.append(grandePieceRouge)
+
+initialiserListeIA()
+
+victoire = False
+
 class Position:
 	def __init__( self, var):
 		self.var=var
@@ -53,8 +78,8 @@ class Bac_a_sable(Canvas):
 		# <find_closest> renvoie la référence du dessin le plus proche :
 		self.selObject = self.find_closest(self.x1, self.y1)
 		
-		if (couleurJoueur==self.itemcget(self.selObject, "fill") ) :		
-			# modification de l'épaisseur du contour du dessin 
+		if (couleurJoueur==self.itemcget(self.selObject, "fill") ) :
+			# modification de l'épaisseur du contour du dessin
 			_position.setPosition(self.coords(self.selObject))
 			self.itemconfig(self.selObject, width =3)
 			# <lift> fait passer le dessin à l'avant-plan :
@@ -76,7 +101,7 @@ class Bac_a_sable(Canvas):
 		"Op. à effectuer quand le bouton gauche de la souris est relâché"
 		if (couleurJoueur==self.itemcget(self.selObject, "fill") ) :
 			if self.selObject :
-				if canAdd(whatCase(event.x , event.y), taille(self.coords(self.selObject)))== False  :
+				if canAdd(whatCase(event.x , event.y), taille(self.coords(self.selObject))) == False  :
 					couleur2=self.itemcget(self.selObject, "fill")
 	
 					Canevas.delete('Gobblet gobblers',self.selObject) 
@@ -99,99 +124,131 @@ class Bac_a_sable(Canvas):
 						coordonneesRectangle = self.coords(self.selObject)
 						taille(coordonneesRectangle)
 
-					#Centrer(self.selObject, whatCase(event.x , event.y),taille(coordonneesRectangle), getCouleurVoid() )
-
-						setCase( whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle) )
+						setCase(whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle) )
 					""" On supprime un rec s'il s'agit d'un deplacement dans la grille"""	
 
-					if (whatCase(event.x , event.y)) == (0,0) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,55,55,95,95)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,36,37,116,117)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,26,27,126,127)
-
-					if (whatCase(event.x , event.y)) == (0,1) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,57,245,97,205)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,36,266,116,186)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,26,174,126,274)
-
-
-					if (whatCase(event.x , event.y)) == (0,2) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,57,394,97,354)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,36,414,116,334)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,26,324,126,424)
-
-
-					if (whatCase(event.x , event.y)) == (1,0) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,205,57,245,97)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,185,37,265,117)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,174,127,274,27)
-
-					if (whatCase(event.x , event.y)) == (1,1) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,205,205,245,245)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,185,187,265,267)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,174,174,273,274)
-
-
-					if (whatCase(event.x , event.y)) == (1,2) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,206,394,246,354)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,186,415,266,335)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,175,424,275,324)
-
-
-					if (whatCase(event.x , event.y)) == (2,0) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,406,99,366,59)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,424,119,344,39)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,434,127,334,27)
-
-
-					if (whatCase(event.x , event.y)) == (2,1) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,405,205,365,245)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,426,187,346,267)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,434,174,334,274)
-
-
-					if (whatCase(event.x , event.y)) == (2,2) :
-						if (taille(coordonneesRectangle)) == 1 :
-							Canevas.coords(self.selObject,405,394,365,354)
-						if (taille(coordonneesRectangle)) == 2 :
-							Canevas.coords(self.selObject,426,415,346,335)
-						if (taille(coordonneesRectangle)) == 3 :
-							Canevas.coords(self.selObject,434,424,334,324)
+					Canevas.delete("Gobblet gobblers", self.selObject)
+					
+					placerPiece(whatCase(event.x, event.y), taille(coordonneesRectangle), couleur)
 					verifVictoire()
-					changerCouleur()
-					changerTourJoueur(couleurJoueur)
-					modifJoueur()
 
+					global mode
+					if mode == 0 : #Si c'est le mode JoueurVSJoueur, on change le tour du joueur
+						changerCouleur()
+						changerTourJoueur(couleurJoueur)
+						modifJoueur()
+
+					elif mode == 1 : #Si c'est le mode IA aléatoire, on lance la fonction 
+						IAaleatoire()
+						#checkVictoire()
 					
 			else:
 				whatCase(event.x , event.y)
+
 			affichePlateau()
-			if victoire == True:
-				rejouer()
+
+def checkVictoire():
+	if (victoire) :
+		#global i
+		#Canevas.delete(i)
+		#i=Canevas.create_text(250,500,tag='victoire',text="Victoire!",fill=couleurJoueur,font=('Marker Felt','50','bold'))
+		#time.sleep(2)
+		rejouer()
+
+def IAaleatoire():
+	#il reste à rajouter déplacement d'une pièce quand la liste de ses pièces est vide
+	pieceHasard = listePiecesIA[randrange(0,len(listePiecesIA))]
+	listePiecesIA.remove(pieceHasard)
+	cleHasard = caseLibre(pieceHasard[1])
+	placerPiece(cleHasard, pieceHasard[1], couleurToString(pieceHasard[0]))
+	setCase(cleHasard, pieceHasard[0], pieceHasard[1])
+
+#Renvoie une clé correspondant aux coordonnées d'une case libre pour une taille donnée
+def caseLibre(taille): 
+	listeCasesDispo = []
+	coordonnees = '012'
+	for i in list(coordonnees):
+		for j in list(coordonnees):
+			if (canAdd((int(i),int(j)), taille)):
+				listeCasesDispo.append(((int(i),int(j))))
+	cleHasard = listeCasesDispo[randrange(0,len(listeCasesDispo))]
+	return cleHasard
+
+
+def placerPiece(cle, taille, couleur): #Fonction pour placer une pièce au centre d'une case qu'on donne en paramètre
+	if cle == (0,0) :
+		if taille == 1 :
+			Canevas.create_rectangle(55,55,95,95, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(36,37,116,117, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(26,27,126,127, outline='black', fill=couleur)
+	if cle == (0,1) :
+		if taille == 1 :
+			Canevas.create_rectangle(57,245,97,205, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(36,266,116,186, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(26,174,126,274, outline='black', fill=couleur)
+
+	if cle == (0,2) :
+		if taille == 1 :
+			Canevas.create_rectangle(57,394,97,354, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(36,414,116,334, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(26,324,126,424, outline='black', fill=couleur)
+
+	if cle == (1,0) :
+		if taille == 1 :
+			Canevas.create_rectangle(205,57,245,97, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(185,37,265,117, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(174,127,274,27, outline='black', fill=couleur)
+
+	if cle == (1,1) :
+		if taille == 1 :
+			Canevas.create_rectangle(205,205,245,245, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(185,187,265,267, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(174,174,273,274, outline='black', fill=couleur)
+
+	if cle == (1,2) :
+		if taille == 1 :
+			Canevas.create_rectangle(206,394,246,354, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(186,415,266,335, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(175,424,275,324, outline='black', fill=couleur)
+
+	if cle == (2,0) :
+		if taille == 1 :
+			Canevas.create_rectangle(406,99,366,59, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(424,119,344,39, outline='black', fill=couleur)	
+		if taille == 3 :
+			Canevas.create_rectangle(434,127,334,27, outline='black', fill=couleur)
+
+	if cle == (2,1) :
+		if taille == 1 :
+			Canevas.create_rectangle(405,205,365,245, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(426,187,346,267, outline='black', fill=couleur)
+		if taille == 3 :
+			Canevas.create_rectangle(434,174,334,274, outline='black', fill=couleur)
+
+	if cle == (2,2) :
+		if taille == 1 :
+			Canevas.create_rectangle(405,394,365,354, outline='black', fill=couleur)
+		if taille == 2 :
+			Canevas.create_rectangle(426,415,346,335, outline='black', fill=couleur)
+		if taille == 3 :
+			Canevas.create_rectangle(434,424,334,324, outline='black', fill=couleur)
+
+	checkVictoire()
+
 
 def nbCoups(couleur):
 	global coupsJ1,coupsJ2
@@ -200,6 +257,7 @@ def nbCoups(couleur):
 	else :
 		coupsJ1=coupsJ1+1
 	print("gagnant ",  gagnant)
+        
 def afficheScore():
 	global  gagnant
 	if gagnant=='red':
@@ -230,44 +288,6 @@ def taille( _taille):
 	
 	#print( "taille:", tailleToString(tailleRrectangle))
 	return tailleRrectangle
-
-
-"""def Centrer( Object, cle, taille,couleur):
-	if cle== (0,0) :
-		if taille==1:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(62,65,102,105, outline='black', fill=couleur)
-		if taille==2:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(33,52,113,132, outline='black', fill=couleur)
-		if taille==3:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(27,33,127,133, outline='black', fill=couleur)
-	
-	if cle== (1,0) :
-		if taille==1:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(201,65,241,105, outline='black', fill=couleur)
-		if taille==2:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(180,50,260,130, outline='black', fill=couleur)
-		if taille==3:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle( 172 ,  30,272,130, outline='black', fill=couleur)
-		
-		if cle== (2,0) :
-		if taille==1:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(201,65,241,105, outline='black', fill=couleur)
-		if taille==2:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle(183,54,263,134, outline='black', fill=couleur)
-		if taille==3:
-			Canevas.delete('Gobblet gobblers',Object) 
-			Canevas.create_rectangle( 172 ,  30,272,130, outline='black', fill=couleur)
-
-"""
-
 																																																																																																																																																																			
 def teste(a,b):
 	print("Case (" , a ,", " , b,")")
@@ -280,7 +300,7 @@ def whatCase(a,b):
 		if b>169 and b<300 :
 			a,b=0,1
 		if b>300:
-			a,b=0,2		
+			a,b=0,2	
 	if a>149 and a<300:
 		if b<169:
 			if b<169:
@@ -319,7 +339,7 @@ if __name__ == '__main__':
 	Largeur = 780
 	Hauteur = 550
 
-	Canevas =Bac_a_sable(Mafenetre, width =Largeur, height =Hauteur, bg ='ivory')
+	Canevas = Bac_a_sable(Mafenetre, width =Largeur, height =Hauteur, bg ='ivory')
 
 	Canevas.pack(padx =5, pady =5)
 	i=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
@@ -353,10 +373,6 @@ if __name__ == '__main__':
 		Canevas.create_line(5,300,470,300)
 		Canevas.create_line(5,150,470,150)
 		
-		
-		
-	
-		
 	affiche()
 	
 	
@@ -368,9 +384,9 @@ if __name__ == '__main__':
 	def Effacer():
 		Canevas.delete(ALL)
 	def rejouer():
-		global victoire
 		Effacer()
 		initPlateau() #On refait un nouveau plateau
+		initialiserListeIA() #On ré-initialise les pièces jouables par l'IA
 		victoire = False #On ré-initialise la variable de victoire pour la prochaine partie
 		affiche()
 
@@ -381,8 +397,9 @@ if __name__ == '__main__':
 	bouton.pack()
 
 	"""
-	Structure de données pour le projet Gobblet Gobblers
-	____________________________________________________
+_________________________________________________________________________________________________________________________________
+	Structure de données :
+
 	Représentation des couleurs:
 	1 = bleu
 	2 = rouge
@@ -398,10 +415,6 @@ if __name__ == '__main__':
 	Chaque case du plateau est une liste
 	On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 à 2 de la plus petite pièce à la plus grande
 	"""
-
-	plateau = {}
-	victoire = False
-	#dictionnaire
 
 	def initPlateau():
 		global plateau
@@ -422,9 +435,10 @@ if __name__ == '__main__':
 		plateau[cle].append([couleur, taille])
 
 	def affichePlateau():
-		global victoire
+		global victoire, listePiecesIA
 		print("Contenu du plateau à cet instant : ")
 		print("__________________________________ ")
+		print("Pieces de l'IA : ",listePiecesIA)
 		for cle in plateau.keys():
 			print("Nombre de pieces a la case = ",cle,":",getNbPieces(cle))
 			#print("Couleur de la deuxieme piece = ", getDernierePiece(cle))
@@ -475,9 +489,9 @@ if __name__ == '__main__':
 
 	def couleurToString(x):
 		if x == 1:
-			return "bleue"
+			return "blue"
 		elif x == 2:
-			return "orange"
+			return "red"
 			
 	def checkLigne(x,y,u,v,t,z):
 		global victoire
@@ -510,7 +524,8 @@ if __name__ == '__main__':
 	0 O O O
 	1 O O O
 	2 O O O
-	(Y)"""
+	(Y)
+	"""
 
 	initPlateau()
 	Mafenetre.mainloop()
