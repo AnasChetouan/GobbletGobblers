@@ -2,20 +2,20 @@
 # module: tkinter
 from tkinter import *
 from random import randrange
-import time
+import tkinter.font as tkFont
+import sys, time
 
-global coupsJ1,coupsJ2, gagnant
+#____Variables globales_____
+
+choix="menu"
+stop=False
+mode = "Joueur VS Joueur" #par défaut
+
 coupsJ2=0
 coupsJ1=0
 gagnant="personne"
-
-global texte
-
-global listePiecesIA3
+texte = ""
 listePiecesIA3 = []
-
-mode = 1 
-
 plateau = {}
 
 def initialiserListeIA():
@@ -139,12 +139,12 @@ class Bac_a_sable(Canvas):
 
 					if victoire == False :
 						global mode
-						if mode == 0 : #Si c'est le mode JoueurVSJoueur, on change le tour du joueur
+						if mode == "Joueur VS Joueur": #Si c'est le mode JoueurVSJoueur, on change le tour du joueur
 							changerCouleur()
 							changerTourJoueur(couleurJoueur)
 							modifJoueur()
 
-						elif mode == 1 : #Si c'est le mode IA aléatoire, on lance la fonction 
+						elif mode == "Joueur VS Ordinateur 1" : #Si c'est le mode IA aléatoire, on lance la fonction 
 							changerCouleur()
 							IAaleatoire()
 					
@@ -161,20 +161,20 @@ def checkVictoire():
 		Canevas.delete(texte)
 		texte=Canevas.create_text(250,500,tag='victoire',text="Victoire!",fill=couleurJoueur,font=('Marker Felt','50','bold'))
 
+"""def IAplus():
+	"""
+
 def IAaleatoire():
 	global listePiecesIA2, listePiecesIA3
 
 	if (len(listePiecesIA) > 0) :
 		tirage = randrange(0,len(listePiecesIA))
-
 		pieceHasard = listePiecesIA[tirage]
 		listePiecesIA.remove(pieceHasard)
-
 		cleHasard = caseLibre(pieceHasard[1])
 		placerPiece(cleHasard, pieceHasard[1], listePiecesIA2[tirage])
 		listePiecesIA3.append(listePiecesIA2[tirage])
 		del listePiecesIA2[tirage]	
-
 		setCase(cleHasard, pieceHasard[0], pieceHasard[1])
 	else :
 		tirage = randrange(0,len(listePiecesIA3))
@@ -379,216 +379,372 @@ def whatCase(a,b):
 	else :
 		return -1,-1
 
-
-if __name__ == '__main__':
-# ---- Programme de test ----
-	Mafenetre = Tk()
-	Mafenetre.title('GobbletGobblers')
-	Mafenetre.geometry('800x700+400+300')# mise en place du canevas 
-	Largeur = 780
-	Hauteur = 550
-
-	Canevas = Bac_a_sable(Mafenetre, width =Largeur, height =Hauteur, bg ='ivory')
-
-
-	def affiche():
-		Canevas.pack(padx =5, pady =5)
-		global texte
-		texte=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
-
-		Canevas.create_rectangle(560, 20, 600, 60, outline='black', fill='blue')
-		Canevas.create_rectangle(620, 20, 660, 60, outline='black', fill='blue')
-
-		Canevas.create_rectangle(520, 80, 600, 160, outline='black', fill='blue')
-		Canevas.create_rectangle(620, 80, 700, 160, outline='black', fill='blue')
-			
-		Canevas.create_rectangle(500, 180, 600, 280, outline='black', fill='blue')
-		Canevas.create_rectangle(620, 180, 720, 280, outline='black', fill='blue')
-
-		p1 = Canevas.create_rectangle(560, 300, 600, 340, outline='black', fill='red')
-		p2 = Canevas.create_rectangle(620, 300, 660, 340, outline='black', fill='red')
-
-		p3 = Canevas.create_rectangle(520, 360, 600, 440, outline='black', fill='red')	
-		p4 = Canevas.create_rectangle(620, 360, 700, 440, outline='black', fill='red')
-
-		p5 = Canevas.create_rectangle(500, 460, 600, 560, outline='black', fill='red')
-		p6 = Canevas.create_rectangle(620, 460, 720, 560, outline='black', fill='red')
-
-		global listePiecesIA2
-		listePiecesIA2 = []
-		listePiecesIA2.append(p1)
-		listePiecesIA2.append(p2)
-		listePiecesIA2.append(p3)
-		listePiecesIA2.append(p4)
-		listePiecesIA2.append(p5)
-		listePiecesIA2.append(p6)
-
-
-		Canevas.create_line(5,5,5,450)
-		Canevas.create_line(150,5,150,450)
-		Canevas.create_line(300,5,300,450)
-		Canevas.create_line(470,5,470,450)
-		Canevas.create_line(5,5,470,5)
-
-		Canevas.create_line(5,450,470,450)
-		Canevas.create_line(5,300,470,300)
-		Canevas.create_line(5,150,470,150)
-		
+def modifJoueur():
+	global texte
+	Canevas.delete(texte)
+	texte=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
+	
+def Effacer():
+	Canevas.delete(ALL)
+def rejouer():
+	global victoire
+	Effacer()
+	initPlateau() #On refait un nouveau plateau
+	initialiserListeIA() #On ré-initialise les pièces jouables par l'IA
+	victoire = False #On ré-initialise la variable de victoire pour la prochaine partie
 	affiche()
+
+def modifChoix(newChoice):
+	global choix
+	choix=newChoice
+
+def fermerFenetre():
+	global choix, mode
+	if choix=="menu" and mode!="aucun":
+		menuQuitter()
+	if choix=="jeu":
+		maFenetreQuitter()
+	else:
+		menuQuitter_option()
 	
 	
-	def modifJoueur():
-		global texte
-		Canevas.delete(texte)
-		texte=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
+def maFenetreQuitter():
+	modifChoix("menu")
+	Mafenetre.destroy()
+
+def QuitterOption():
+	modifChoix("menu")
+	fenetreOption.destroy()
+
+
+def menuQuitter():
+	modifChoix("jeu")
+	menu2.destroy()
+
+def menuQuitter_option():
+	modifChoix("option")
+	menu2.destroy()
+
+def quitter():
+	fermerFenetre()
+	global stop
+	stop=True
+
+def modifMode(newMode):
+	global mode
+	mode=newMode
+
+#____________Structure de données____________
+"""	
+Représentation des couleurs:
+1 = bleu
+2 = rouge
+Représentation des tailles:
+1 = petit
+2 = moyen
+3 = grand
+Représentation des pièces:
+Une pièce = une liste sous la forme [numCouleur,numTaille]
+ex : petite pièce bleue = [1,1]
+Représentation des cases du plateau:
+Une case du plateau de coordonnée (x,y) = un élément du dictionnaire plateau avec une clé (x,y)
+Chaque case du plateau est une liste
+On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 à 2 de la plus petite pièce à la plus grande
+"""
+def initPlateau():
+	global plateau
+	coordonnees = '012'
+	for i in list(coordonnees):
+		for j in list(coordonnees):
+				plateau[(int(i),int(j))] = []
+def getCase(cle):
+	global plateau
+	coordonnees = '012'
+	for i in list(coordonnees):
+		for j in list(coordonnees):
+			if a==i and b==j:
+				return plateau[(int(cle))]
 	
-	def Effacer():
-		Canevas.delete(ALL)
-	def rejouer():
-		global victoire
-		Effacer()
-		initPlateau() #On refait un nouveau plateau
-		initialiserListeIA() #On ré-initialise les pièces jouables par l'IA
-		victoire = False #On ré-initialise la variable de victoire pour la prochaine partie
-		affiche()
+def setCase(cle, couleur, taille):
+	plateau[cle].append([couleur, taille])
 
-	bouton=Button(Mafenetre, text="Fermer", command=Mafenetre.quit)
-	bouton.pack()
-
-	bouton=Button(Mafenetre, text="Rejouer", command= rejouer)
-	bouton.pack()
-
-	"""
-_________________________________________________________________________________________________________________________________
-	Structure de données :
-
-	Représentation des couleurs:
-	1 = bleu
-	2 = rouge
-	Représentation des tailles:
-	1 = petit
-	2 = moyen
-	3 = grand
-	Représentation des pièces:
-	Une pièce = une liste sous la forme [numCouleur,numTaille]
-	ex : petite pièce bleue = [1,1]
-	Représentation des cases du plateau:
-	Une case du plateau de coordonnée (x,y) = un élément du dictionnaire plateau avec une clé (x,y)
-	Chaque case du plateau est une liste
-	On peut ajouter à chaque case une liste de 3 pièces maximum imbriquées de 0 à 2 de la plus petite pièce à la plus grande
-	"""
-
-	def initPlateau():
-		global plateau
-		coordonnees = '012'
-		for i in list(coordonnees):
-			for j in list(coordonnees):
-					plateau[(int(i),int(j))] = []
-
-	def getCase(cle):
-		global plateau
-		coordonnees = '012'
-		for i in list(coordonnees):
-			for j in list(coordonnees):
-					if a==i and b==j:
-						return plateau[(int(cle))]
-	
-	def setCase(cle, couleur, taille):
-		plateau[cle].append([couleur, taille])
-
-	def affichePlateau():
-		global victoire, listePiecesIA
-		print("Contenu du plateau à cet instant : ")
-		print("__________________________________ ")
-		print("Pieces de l'IA : ",listePiecesIA)
-		for cle in plateau.keys():
-			print("Nombre de pieces a la case = ",cle,":",getNbPieces(cle))
-			#print("Couleur de la deuxieme piece = ", getDernierePiece(cle))
-			if getNbPieces(cle) > 0 :
-				print("Taille de la premiere piece a la case = ", cle,":",getTaille(cle,0))
-				print("Couleur de la derniere piece a la case = ", cle,":", getCouleur(cle,getDernierePiece(cle)))
-		verifVictoire()
-		print("Victoire ?", victoire)
+def affichePlateau():
+	global victoire, listePiecesIA
+	print("Contenu du plateau à cet instant : ")
+	print("__________________________________ ")
+	for cle in plateau.keys():
+		print("Nombre de pieces a la case = ",cle,":",getNbPieces(cle))
+		#print("Couleur de la deuxieme piece = ", getDernierePiece(cle))
+		if getNbPieces(cle) > 0 :
+			print("Taille de la derniere piece a la case = ", cle,":",getTaille(cle,getDernierePiece(cle)))
+			print("Couleur de la derniere piece a la case = ", cle,":", getCouleur(cle,getDernierePiece(cle)))
+	verifVictoire()
+	print("Victoire ?", victoire)
         
-	def getCouleur(cle,numPiece):
-		global plateau
-		return plateau[cle][numPiece][0]
+def getCouleur(cle,numPiece):
+	global plateau
+	return plateau[cle][numPiece][0]
 
-	def getTaille(cle,numPiece):
-		global plateau
-		return plateau[cle][numPiece][1]
+def getTaille(cle,numPiece):
+	global plateau
+	return plateau[cle][numPiece][1]
 
-	def getNbPieces(cle):
-		global plateau
-		return len(plateau[cle])
+def getNbPieces(cle):
+	global plateau
+	return len(plateau[cle])
 
-	def canAdd(cle, tailleCourante):
-		if cle == (-1,-1) :
-			return False
-		if getNbPieces(cle) == 0 :
+def canAdd(cle, tailleCourante):
+	if cle == (-1,-1) :
+		return False
+	if getNbPieces(cle) == 0 :
+		return True
+	if getNbPieces(cle) < 3 :
+		if tailleCourante > getTaille(cle,getDernierePiece(cle)) :
 			return True
-		if getNbPieces(cle) < 3 :
-			if tailleCourante > getTaille(cle,getDernierePiece(cle)) :
-				return True
-			else :
-				return False
 		else :
 			return False
+	else :
+		return False
 
-	def getDernierePiece(cle):
-		return getNbPieces(cle)-1
+def getDernierePiece(cle):
+	return getNbPieces(cle)-1
 
-	def deleteDernierePiece(cle):
-		plateau[cle] = plateau[cle][:getNbPieces(cle)-1]
+def deleteDernierePiece(cle):
+	plateau[cle] = plateau[cle][:getNbPieces(cle)-1]
 				
-	def tailleToString(x):
-		if x == 1:
-			return "petite"
-		elif x == 2:
-			return "moyenne"
-		elif x == 3:
-			return "grande"
+def tailleToString(x):
+	if x == 1:
+		return "petite"
+	elif x == 2:
+		return "moyenne"
+	elif x == 3:
+		return "grande"
 
-	def couleurToString(x):
-		if x == 1:
-			return "blue"
-		elif x == 2:
-			return "red"
-			
-	def checkLigne(x,y,u,v,t,z):
-		global victoire
-		global gagnant
-		if(getNbPieces((x,y)) > 0):
-			c1 = getCouleur((x,y),getDernierePiece((x,y)))
-			if(getNbPieces((u,v)) > 0):
-				c2 = getCouleur((u,v),getDernierePiece((u,v)))
-				if(getNbPieces((t,z)) > 0):
-					c3 = getCouleur((t,z),getDernierePiece((t,z)))
-					if(c1 == c2 and c2 == c3):
-						victoire = True
-						gagnant=c1
+def couleurToString(x):
+	if x == 1:
+		return "blue"
+	elif x == 2:
+		return "red"
+		
+def checkLigne(x,y,u,v,t,z):
+	global victoire
+	global gagnant
+	if(getNbPieces((x,y)) > 0):
+		c1 = getCouleur((x,y),getDernierePiece((x,y)))
+		if(getNbPieces((u,v)) > 0):
+			c2 = getCouleur((u,v),getDernierePiece((u,v)))
+			if(getNbPieces((t,z)) > 0):
+				c3 = getCouleur((t,z),getDernierePiece((t,z)))
+				if(c1 == c2 and c2 == c3):
+					victoire = True
+					gagnant=c1
 
-	def verifVictoire():
-		#Lignes horizontales :
-		checkLigne(0,0,1,0,2,0)
-		checkLigne(0,1,1,1,2,1)
-		checkLigne(0,2,1,2,2,2)
-		#Lignes verticales :
-		checkLigne(0,0,0,1,0,2)
-		checkLigne(1,0,1,1,1,2)
-		checkLigne(2,0,2,1,2,2)
-		#Diagonales :
-		checkLigne(0,0,1,1,2,2)
-		checkLigne(2,0,1,1,0,2)
+def verifVictoire():
+	#Lignes horizontales :
+	checkLigne(0,0,1,0,2,0)
+	checkLigne(0,1,1,1,2,1)
+	checkLigne(0,2,1,2,2,2)
+	#Lignes verticales :
+	checkLigne(0,0,0,1,0,2)
+	checkLigne(1,0,1,1,1,2)
+	checkLigne(2,0,2,1,2,2)
+	#Diagonales :
+	checkLigne(0,0,1,1,2,2)
+	checkLigne(2,0,1,1,0,2)
     
-	""" On considère qu'on note le plateau de jeu dans un plan de cette façon (avec O représentant les cases)
-	  0 1 2 (X)
+""" On note le plateau de jeu dans un plan de cette façon (avec O représentant les cases)
+ 	  0 1 2 (X)
 	0 O O O
 	1 O O O
 	2 O O O
-	(Y)
-	"""
+	(Y) """
+	
 
-	initPlateau()
-	Mafenetre.mainloop()
+#_______________Fenêtre de jeu______________#
+
+
+
+if __name__ == '__main__':
+	while stop!=True:
+		global mode
+		print("mode de jeu en cours : " , mode )
+		if choix=="jeu":
+			Mafenetre = Tk()
+			Mafenetre.title('GobbletGobblers')
+			Mafenetre.geometry('800x700+400+300')# mise en place du canevas 
+			Largeur = 780
+			Hauteur = 550
+
+			Canevas = Bac_a_sable(Mafenetre, width =Largeur, height =Hauteur, bg ='ivory')
+
+
+			def affiche():
+				Canevas.pack(padx =5, pady =5)
+				global texte
+				texte=Canevas.create_text(250,500,tag='joueur',text=tourJoueur,fill=couleurJoueur,font=('Marker Felt','50','bold'))
+
+				Canevas.create_rectangle(560, 20, 600, 60, outline='black', fill='blue')
+				Canevas.create_rectangle(620, 20, 660, 60, outline='black', fill='blue')
+
+				Canevas.create_rectangle(520, 80, 600, 160, outline='black', fill='blue')
+				Canevas.create_rectangle(620, 80, 700, 160, outline='black', fill='blue')
+			
+				Canevas.create_rectangle(500, 180, 600, 280, outline='black', fill='blue')
+				Canevas.create_rectangle(620, 180, 720, 280, outline='black', fill='blue')
+
+				p1 = Canevas.create_rectangle(560, 300, 600, 340, outline='black', fill='red')
+				p2 = Canevas.create_rectangle(620, 300, 660, 340, outline='black', fill='red')
+
+				p3 = Canevas.create_rectangle(520, 360, 600, 440, outline='black', fill='red')	
+				p4 = Canevas.create_rectangle(620, 360, 700, 440, outline='black', fill='red')
+
+				p5 = Canevas.create_rectangle(500, 460, 600, 560, outline='black', fill='red')
+				p6 = Canevas.create_rectangle(620, 460, 720, 560, outline='black', fill='red')
+
+				global listePiecesIA2
+				listePiecesIA2 = []
+				listePiecesIA2.append(p1)
+				listePiecesIA2.append(p2)
+				listePiecesIA2.append(p3)
+				listePiecesIA2.append(p4)
+				listePiecesIA2.append(p5)
+				listePiecesIA2.append(p6)
+
+				Canevas.create_line(5,5,5,450)
+				Canevas.create_line(150,5,150,450)
+				Canevas.create_line(300,5,300,450)
+				Canevas.create_line(470,5,470,450)
+				Canevas.create_line(5,5,470,5)
+
+				Canevas.create_line(5,450,470,450)
+				Canevas.create_line(5,300,470,300)
+				Canevas.create_line(5,150,470,150)
+		
+			affiche()
+
+			bouton=Button(Mafenetre, text="Rejouer", command= rejouer)
+			bouton.pack()
+
+			bouton=Button(Mafenetre, text= "Retour au menu", command=maFenetreQuitter)
+			bouton.pack()
+
+			bouton=Button(Mafenetre, text="Fermer", command= quitter)
+			bouton.pack()
+
+
+			initPlateau()
+			Mafenetre.mainloop()
+
+		if choix=="option":
+			fenetreOption = Tk()
+			fenetreOption.geometry('550x450+420+220')
+		# Entete de la page
+
+			Entete=Label(fenetreOption, text='Option', font=("Helvetica", 25), fg="orange")
+			Entete.pack()
+
+
+			def ModifChaineMode():
+				global mode
+				chaineMode.configure(text = "Mode selectionné : " + mode)
+				chaineMode.pack()
+
+			cadre=Frame(fenetreOption, width=250, height=350, borderwidth=2)
+			cadre.pack(fill=BOTH)
+
+			def selectMode1():
+				global mode 
+				modifMode("Joueur VS Joueur")
+				ModifChaineMode()
+			def selectMode2():
+				global mode
+				modifMode("Joueur VS Ordinateur 1")
+				ModifChaineMode()
+			def selectMode3():
+				global mode
+				modifMode("Joueur VS Ordinateur 2")
+				ModifChaineMode()
+			def exitOption():
+				fenetreOption.destroy()
+				global stop
+				stop=True
+
+
+			#image des boutons
+			imageJvsJ = PhotoImage(file ='JvsJ.gif')
+			imageJvIa= PhotoImage(file ='JvsIA.gif')
+			imageIavsIa= PhotoImage(file ='ia2.gif')
+			JvsJ = Button(fenetreOption, text="Joueur VS Joueur", image=imageJvsJ,command=selectMode1)
+			JvsJ.pack()
+
+			JvsIA = Button(fenetreOption, text="Joueur VS Ordinateur", image=imageJvIa, command=selectMode2)
+			JvsIA.pack()
+
+			IAvsIA = Button(fenetreOption, text="Ordinateur VS Ordinateur",image=imageIavsIa,  command=selectMode3)
+			IAvsIA.pack()
+
+			chaineMode=Label(fenetreOption,text="Mode selectionné  : ",font=("Helvetica", 18))
+			chaineMode.pack()
+
+			#Boutton pied de page
+			
+			boutton_Valider=Button(cadre, text='Retour',font=("Helvetica", 16), fg='green', command=QuitterOption)
+
+			boutton_Quitter=Button(cadre,text='Quitter',font=("Helvetica", 16), fg='red', command=exitOption)
+
+			boutton_Valider.pack(side=LEFT)
+
+			boutton_Quitter.pack(side= RIGHT)
+
+			fenetreOption.mainloop()
+
+		if choix=="menu":
+			menu2 = Tk()
+			#var = IntVar()
+			menu2.title('menu 2')
+			menu2.geometry('550x650+420+220')
+
+			canvas = Canvas(menu2, width=550, height=120, bg= 'light blue')
+			canvas.create_rectangle(0, 0, 60, 120, outline='black', fill='blue')
+			canvas.create_rectangle(490, 0, 550, 120, outline='black', fill='red')
+			_font= ('Times', 36, 'bold')
+			canvas.create_text(280, 50, text="Gobblet-Gobblers", font= _font, fill='black')
+			canvas.pack()
+
+			def exit():
+				menu2.destroy()
+				global stop
+				stop=True
+
+			cadre=Frame(menu2, width=450, height=450, borderwidth=2,bg= 'light blue')
+
+			cadre.pack(fill=BOTH)
+			monFont=tkFont.Font(family='Helvetica', size=36, weight='bold')
+			#menu = PhotoImage(file ='menu.gif')
+				
+		#canvas.pack()
+
+			can1 = Canvas(menu2, width =160, height =160, bg ='white')
+
+			play = PhotoImage(file ='play.gif')
+			option= PhotoImage(file ='option.gif')
+			Quitter= PhotoImage(file ='quitter.gif')
+
+			item = can1.create_image(80, 80, image =play)
+			item2 = can1.create_image(80, 80, image =option)
+			item3 = can1.create_image(80, 80, image =Quitter)
+
+
+			boutton_Valider=Button(cadre, image =play,fg='green', command=menuQuitter)
+			boutton_Valider.pack()
+				
+			boutton_Valider=Button(cadre , fg='green', image=option, command=menuQuitter_option)
+			boutton_Valider.pack()
+			boutton_Valider=Button(cadre, fg='green', image=Quitter, command=exit)
+			boutton_Valider.pack()
+
+
+			label = Label(menu2)
+			label.pack()
+			menu2.mainloop()
 
