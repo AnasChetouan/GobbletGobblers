@@ -10,9 +10,10 @@ import sys, time
 choix="menu"
 stop=False
 mode = "Joueur VS Joueur" #par défaut
-
 coupsJ2=0
 coupsJ1=0
+couleurJoueur='blue'
+tourJoueur='Joueur 1'
 gagnant="personne"
 texte = ""
 listePiecesIA3 = []
@@ -45,11 +46,6 @@ class Position:
 		 self.var= _var
 _position= Position(0)
 
-global couleurJoueur
-couleurJoueur='blue'
-
-global tourJoueur
-tourJoueur='Joueur 1'
 
 def changerTourJoueur(couleurJoueur):
 	global tourJoueur
@@ -60,6 +56,7 @@ def changerTourJoueur(couleurJoueur):
 
 def changerCouleur():
 	global couleurJoueur
+	nbCoups(couleurJoueur)
 	if couleurJoueur=='blue' :
 		couleurJoueur='red'
 	else :
@@ -136,7 +133,7 @@ class Bac_a_sable(Canvas):
 					setCase(whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle))
 					placerPiece(whatCase(event.x, event.y), taille(coordonneesRectangle), self.selObject)
 					checkVictoire()
-
+			
 					if victoire == False :
 						global mode
 						if mode == "Joueur VS Joueur": #Si c'est le mode JoueurVSJoueur, on change le tour du joueur
@@ -147,11 +144,14 @@ class Bac_a_sable(Canvas):
 						elif mode == "Joueur VS Ordinateur 1" : #Si c'est le mode IA aléatoire, on lance la fonction 
 							changerCouleur()
 							IAaleatoire()
+
+						elif mode == "Joueur VS Ordinateur 2" : #Si c'est le mode IA aléatoire, on lance la fonction 
+							changerCouleur()
+							IAplus()
 					
 			else:
 				whatCase(event.x , event.y)
 
-			#checkVictoire()
 			affichePlateau()
 
 def checkVictoire():
@@ -160,30 +160,47 @@ def checkVictoire():
 		global texte
 		Canevas.delete(texte)
 		texte=Canevas.create_text(250,500,tag='victoire',text="Victoire!",fill=couleurJoueur,font=('Marker Felt','50','bold'))
-
-"""def IAplus():
-	"""
+		afficheScore()
 
 def IAaleatoire():
 	global listePiecesIA2, listePiecesIA3
 
-	if (len(listePiecesIA) > 0) :
-		tirage = randrange(0,len(listePiecesIA))
-		pieceHasard = listePiecesIA[tirage]
-		listePiecesIA.remove(pieceHasard)
-		cleHasard = caseLibre(pieceHasard[1])
-		placerPiece(cleHasard, pieceHasard[1], listePiecesIA2[tirage])
-		listePiecesIA3.append(listePiecesIA2[tirage])
-		del listePiecesIA2[tirage]	
-		setCase(cleHasard, pieceHasard[0], pieceHasard[1])
-	else :
-		tirage = randrange(0,len(listePiecesIA3))
+	"""Détail du code:
+	listePiecesIA = la liste des pièces(sous forme de liste de données) qu'il reste à placer
+	listePiecesIA2 = la même liste mais avec les pièces sous forme d'objet graphiques (les dessins avec le canevas)
+	listePiecesIA3 = liste avec les pièces qui sont déjà placées sur le plateau
+	"""
+
+	if (len(listePiecesIA) > 0) : #Tant qu'on a des pièces à placer on fait ça :
+		tirage = randrange(0,len(listePiecesIA)) #on tire un chiffre au hasard parmi la liste des pièces qu'il reste à placer
+		pieceHasard = listePiecesIA[tirage] #on recupère cette pièce avec l'index du chiffre tiré au hasard
+		listePiecesIA.remove(pieceHasard)  #on enlève la pièce de la liste car on va la placer et elle sera plus à placer
+		cleHasard = caseLibre(pieceHasard[1]) #caseLibre renvoie une clé tirée au hasard parmi une liste de cases où il est possible de placer la pièce qu'on vient de tirer
+		placerPiece(cleHasard, pieceHasard[1], listePiecesIA2[tirage]) #placerPiece permet de placer l'objet graphique qui correspond à la pièce qu'on a tirée
+										# et cet objet est dans la liste IA2 avec le même index que dans la liste IA1
+		listePiecesIA3.append(listePiecesIA2[tirage]) #On ajoute à la liste IA3 l'objet qu'on vient de placer (car IA3 est la liste des objets qu'on place)
+		del listePiecesIA2[tirage] #On supprime l'objet qu'on a placé de la liste IA2
+		setCase(cleHasard, 2, pieceHasard[1]) #setCase permet de rentrer les donnée de la pièces dans la structure de donnée du plateau
+	else : #Si on a plus de pièces à placer, l'IA va déplacer celles qui sont déjà placées
+		tirage = randrange(0,len(listePiecesIA3))  #Tirage au sort d'une pièce parmi les pièces placées
 		pieceHasard = listePiecesIA3[tirage]
 		taillePieceHasard = taille(Canevas.coords(pieceHasard))
 		cleHasard = caseLibre(taillePieceHasard)
-		placerPiece(cleHasard, taillePieceHasard, pieceHasard)
-		setCase(cleHasard, 2, taillePieceHasard)
+		placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
+		setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau
 		
+	checkVictoire()
+	changerCouleur()
+
+def IAplus():
+	if (coupsJ2 == 0): #Premier mouvement de l'IA améliorée = placer une grosse pièce au milieu si c'est possible
+		last = len(listePiecesIA)-1
+		premierePiece = listePiecesIA[last]
+		placerPiece((1,1), premierePiece[1], listePiecesIA2[last])
+		setCase((1,1), 2, premierePiece[1])
+
+#... pas fini
+
 	checkVictoire()
 	changerCouleur()
 
@@ -305,14 +322,14 @@ def nbCoups(couleur):
 		coupsJ2= coupsJ2+1
 	else :
 		coupsJ1=coupsJ1+1
-	print("gagnant ",  gagnant)
+	#print("gagnant ",  gagnant)
         
 def afficheScore():
 	global  gagnant
 	if gagnant=='red':
-		print("Le joueur rouge gagne la partie avec ", coupsJ2 , " déplacements")
+		print("Le joueur rouge gagne la partie avec",coupsJ2," déplacements")
 	else:
-		print("Le joueur bleu gagne la partie avec ", coupsJ1 , " déplacements")
+		print("Le joueur bleu gagne la partie avec",coupsJ1, " déplacements")
 def  couleur2Int(c):
 	couleurInt=0
 	if c=="red":
@@ -566,8 +583,7 @@ def verifVictoire():
 
 if __name__ == '__main__':
 	while stop!=True:
-		global mode
-		print("mode de jeu en cours : " , mode )
+		print("mode de jeu en cours : ", mode)
 		if choix=="jeu":
 			Mafenetre = Tk()
 			Mafenetre.title('GobbletGobblers')
@@ -720,7 +736,7 @@ if __name__ == '__main__':
 
 			cadre.pack(fill=BOTH)
 			monFont=tkFont.Font(family='Helvetica', size=36, weight='bold')
-			#menu = PhotoImage(file ='menu.gif')
+			menu = PhotoImage(file ='menu.gif')
 				
 		#canvas.pack()
 
