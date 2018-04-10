@@ -171,7 +171,7 @@ def IAaleatoire():
 	listePiecesIA3 = liste avec les pièces qui sont déjà placées sur le plateau
 	"""
 
-	if (len(listePiecesIA) > 0) : #Tant qu'on a des pièces à placer on fait ça :
+	if (len(listePiecesIA) > 0 and canAddOne(listePiecesIA)) : #Tant qu'on a des pièces à placer on fait ça :
 		tirage = randrange(0,len(listePiecesIA)) #on tire un chiffre au hasard parmi la liste des pièces qu'il reste à placer
 		pieceHasard = listePiecesIA[tirage] #on recupère cette pièce avec l'index du chiffre tiré au hasard
 		listePiecesIA.remove(pieceHasard)  #on enlève la pièce de la liste car on va la placer et elle sera plus à placer
@@ -179,14 +179,26 @@ def IAaleatoire():
 		placerPiece(cleHasard, pieceHasard[1], listePiecesIA2[tirage]) #placerPiece permet de placer l'objet graphique qui correspond à la pièce qu'on a tirée
 										# et cet objet est dans la liste IA2 avec le même index que dans la liste IA1
 		listePiecesIA3.append(listePiecesIA2[tirage]) #On ajoute à la liste IA3 l'objet qu'on vient de placer (car IA3 est la liste des objets qu'on place)
-		del listePiecesIA2[tirage] #On supprime l'objet qu'on a placé de la liste IA2
-		setCase(cleHasard, 2, pieceHasard[1]) #setCase permet de rentrer les donnée de la pièces dans la structure de donnée du plateau
+		del listePiecesIA2[tirage] #On supprime l'objet qu'on a placé de la liste IA2 car il n'est plus à placer
+		setCase(cleHasard, 2, pieceHasard[1]) #setCase permet de rentrer les donnée de la pièce dans la structure de donnée du plateau
+		#print("test ia3", listePiecesIA3)
 	else : #Si on a plus de pièces à placer, l'IA va déplacer celles qui sont déjà placées
-		tirage = randrange(0,len(listePiecesIA3))  #Tirage au sort d'une pièce parmi les pièces placées
-		pieceHasard = listePiecesIA3[tirage]
+		listeIA4 = []
+		listeIA4 = deplacementsPossibles(2,listePiecesIA3)
+		#print("Déplacements possibles : ", listeIA4)
+		tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
+		pieceHasard = listeIA4[tirage]
 		taillePieceHasard = taille(Canevas.coords(pieceHasard))
 		cleHasard = caseLibre(taillePieceHasard)
+		if (cleHasard == (-1, -1)):
+			while (cleHasard == (-1,-1)):
+				tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
+				pieceHasard = listeIA4[tirage]
+				taillePieceHasard = taille(Canevas.coords(pieceHasard))
+				cleHasard = caseLibre(taillePieceHasard)
+
 		placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
+		deleteDernierePiece( whatCase( Canevas.coords(pieceHasard)[0], Canevas.coords(pieceHasard)[1] ))
 		setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau
 		
 	checkVictoire()
@@ -209,67 +221,89 @@ def IAplus():
 		#Mode Défense (l'IA bloque le joueur s'il aligne 2 pièces, et s'il peut rien faire il passe en mode attaque)
 
 		lignesJoueur = calculNbPiecesBleues() #renvoie la liste des lignes où le joueur a 2 pièces alignées
-		last = len(listePiecesIA)-1
-		plusGrossePiece = listePiecesIA[last]
 		print("Lignes joueur : ", lignesJoueur)
 
-		for ligne in lignesJoueur:
-			if(getNbPieces(ligne[0]) > 0):
-				if (getCouleur(ligne[0],getDernierePiece(ligne[0])) != 2 and piecePlacee == False):
-					if (canAdd(ligne[0], plusGrossePiece[1])):
+		if (canAddOne(listePiecesIA) and len(listePiecesIA) > 0):
+			last = len(listePiecesIA)-1
+			plusGrossePiece = listePiecesIA[last]
+			for ligne in lignesJoueur:
+				if(getNbPieces(ligne[0]) > 0):
+					if (getCouleur(ligne[0],getDernierePiece(ligne[0])) != 2 and piecePlacee == False):
+						if (canAdd(ligne[0], plusGrossePiece[1])):
+							listePiecesIA.remove(plusGrossePiece)
+							placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
+							listePiecesIA3.append(listePiecesIA2[last])
+							del listePiecesIA2[last]
+							setCase(ligne[0], 2, plusGrossePiece[1])
+							piecePlacee = True
+				else:
+					if (piecePlacee == False):
 						listePiecesIA.remove(plusGrossePiece)
 						placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
 						listePiecesIA3.append(listePiecesIA2[last])
 						del listePiecesIA2[last]
 						setCase(ligne[0], 2, plusGrossePiece[1])
 						piecePlacee = True
-			else:
-				if (piecePlacee == False):
-					listePiecesIA.remove(plusGrossePiece)
-					placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
-					listePiecesIA3.append(listePiecesIA2[last])
-					del listePiecesIA2[last]
-					setCase(ligne[0], 2, plusGrossePiece[1])
-					piecePlacee = True
 
-			if(getNbPieces(ligne[1]) > 0):
-				if (getCouleur(ligne[1],getDernierePiece(ligne[1])) != 2 and piecePlacee == False):
-					if (canAdd(ligne[1], plusGrossePiece[1])):
+				if(getNbPieces(ligne[1]) > 0):
+					if (getCouleur(ligne[1],getDernierePiece(ligne[1])) != 2 and piecePlacee == False):
+						if (canAdd(ligne[1], plusGrossePiece[1])):
+							listePiecesIA.remove(plusGrossePiece)
+							placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
+							listePiecesIA3.append(listePiecesIA2[last])
+							del listePiecesIA2[last]
+							setCase(ligne[1], 2, plusGrossePiece[1])
+							piecePlacee = True
+				else:
+					if (piecePlacee == False):
 						listePiecesIA.remove(plusGrossePiece)
 						placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
 						listePiecesIA3.append(listePiecesIA2[last])
 						del listePiecesIA2[last]
 						setCase(ligne[1], 2, plusGrossePiece[1])
 						piecePlacee = True
-			else:
-				if (piecePlacee == False):
-					listePiecesIA.remove(plusGrossePiece)
-					placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
-					listePiecesIA3.append(listePiecesIA2[last])
-					del listePiecesIA2[last]
-					setCase(ligne[1], 2, plusGrossePiece[1])
-					piecePlacee = True
 
-			if(getNbPieces(ligne[2]) > 0):
-				if (getCouleur(ligne[2],getDernierePiece(ligne[2])) != 2 and piecePlacee == False):
-					if (canAdd(ligne[2], plusGrossePiece[1])):
+				if(getNbPieces(ligne[2]) > 0):
+					if (getCouleur(ligne[2],getDernierePiece(ligne[2])) != 2 and piecePlacee == False):
+						if (canAdd(ligne[2], plusGrossePiece[1])):
+							listePiecesIA.remove(plusGrossePiece)
+							placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
+							listePiecesIA3.append(listePiecesIA2[last])
+							del listePiecesIA2[last]
+							setCase(ligne[2], 2, plusGrossePiece[1])
+							piecePlacee = True
+				else:
+					if (piecePlacee == False):
 						listePiecesIA.remove(plusGrossePiece)
 						placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
 						listePiecesIA3.append(listePiecesIA2[last])
 						del listePiecesIA2[last]
 						setCase(ligne[2], 2, plusGrossePiece[1])
 						piecePlacee = True
-			else:
-				if (piecePlacee == False):
-					listePiecesIA.remove(plusGrossePiece)
-					placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
-					listePiecesIA3.append(listePiecesIA2[last])
-					del listePiecesIA2[last]
-					setCase(ligne[2], 2, plusGrossePiece[1])
-					piecePlacee = True
+
+		else:
+			listeIA4 = []
+			listeIA4 = deplacementsPossibles(2,listePiecesIA3)
+			tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
+			pieceHasard = listeIA4[tirage]
+			taillePieceHasard = taille(Canevas.coords(pieceHasard))
+			cleHasard = caseLibre(taillePieceHasard)
+			if (cleHasard == (-1, -1)):
+				while (cleHasard == (-1,-1)):
+					tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
+					pieceHasard = listeIA4[tirage]
+					taillePieceHasard = taille(Canevas.coords(pieceHasard))
+					cleHasard = caseLibre(taillePieceHasard)
+
+			placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
+			deleteDernierePiece( whatCase( Canevas.coords(pieceHasard)[0], Canevas.coords(pieceHasard)[1] ))
+			setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau
+			piecePlacee = True
+
+		#Mode Attaque (l'IA place ses pièces dans le but de gagner, il essaye d'aligner une ligne)
 		
 
-		if (piecePlacee == False): #Mode Attaque (l'IA place ses pièces dans le but de gagner, il essaye d'aligner une ligne)
+		if (piecePlacee == False and canAddOne(listePiecesIA)): 
 			if (len(listePiecesIA) > 0) :
 				lignesPossibles = calculNbPiecesRouges() #renvoie la liste des lignes possibles (une ligne possible = une liste où l'IA a posé le + de pièces)
 				last = len(listePiecesIA)-1
@@ -341,16 +375,7 @@ def IAplus():
 					del listePiecesIA2[tirage]
 					setCase(cleHasard, 2, piece[1])
 					piecePlacee = True
-			if (len(listePiecesIA) == 0):
-				print("liste nulle")
 
-		"""else:
-			tirage = randrange(0,len(listePiecesIA3))  #Tirage au sort d'une pièce parmi les pièces placées
-			pieceHasard = listePiecesIA3[tirage]
-			taillePieceHasard = taille(Canevas.coords(pieceHasard))
-			cleHasard = caseLibre(taillePieceHasard)
-			placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-			setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau"""
 		
 
 
@@ -359,6 +384,29 @@ def IAplus():
 	checkVictoire()
 	nbCoups(couleurJoueur)
 	changerCouleur()
+
+def deplacementsPossibles(col, l):
+#Cette fonction renvoie seulement les pièces déjà placées qu'on peut déplacer (donc ces pièces se situent à la dernière position d'une case)
+	coordonnees = '012'
+	res = []
+	for piece in l:
+		for i in list(coordonnees):
+			for j in list(coordonnees):
+				if (getNbPieces((int(i),int(j))) > 0):
+					if( getCouleur( (int(i),int(j)),getDernierePiece( (int(i),int(j)) )) == col and taille(Canevas.coords(piece)) == getTaille( (int(i),int(j) ),getDernierePiece( (int(i),int(j)) ))):
+				#print("coords", Canevas.coords(piece))
+						res.append(piece)
+	return res
+	
+
+def canAddOne(liste):
+	coordonnees = '012'
+	for piece in liste:
+		for i in list(coordonnees):
+			for j in list(coordonnees):
+				if (canAdd((int(i),int(j)), piece[1])):
+					return True
+	return False
 
 
 def calculNbPiecesLigne(x,y,u,v,t,z,col):
@@ -462,7 +510,9 @@ def caseLibre(taille):
 		for j in list(coordonnees):
 			if (canAdd((int(i),int(j)), taille)):
 				listeCasesDispo.append(((int(i),int(j))))
-	cleHasard = listeCasesDispo[randrange(0,len(listeCasesDispo))]
+	cleHasard = (-1,-1)
+	if (len(listeCasesDispo) > 0):
+		cleHasard = listeCasesDispo[randrange(0,len(listeCasesDispo))]
 	print("Cle hasard : ", cleHasard)
 	return cleHasard
 
@@ -656,9 +706,11 @@ def Effacer():
 	Canevas.delete(ALL)
 
 def rejouer():
-	global victoire, coupsJ1, coupsJ2, couleurJoueur
+	global victoire, coupsJ1, coupsJ2, couleurJoueur, listePiecesIA3
 	Effacer()
+	listePiecesIA3 = []
 	couleurJoueur='blue'
+	tourJoueur='Joueur 1'
 	coupsJ1=0
 	coupsJ2=0
 	initPlateau() #On refait un nouveau plateau
