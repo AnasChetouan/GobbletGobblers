@@ -129,22 +129,24 @@ class Bac_a_sable(Canvas):
 
 					""" On supprime un rec s'il s'agit d'un deplacement dans la grille"""	
 
-					setCase(whatCase(event.x,event.y), getCouleurVoid(), taille(coordonneesRectangle))
+					setCase(whatCase(event.x,event.y),couleur2Int(getCouleurVoid()), taille(coordonneesRectangle))
 					placerPiece(whatCase(event.x, event.y), taille(coordonneesRectangle), self.selObject)
 					nbCoups(couleurJoueur)
 					checkVictoire()
-					changerCouleur()
 					
 					if victoire == False :
 						global mode
 						if mode == "Joueur VS Joueur": #Si c'est le mode JoueurVSJoueur, on change le tour du joueur
+							changerCouleur()
 							changerTourJoueur(couleurJoueur)
 							modifJoueur()
 
 						elif mode == "Joueur VS Ordinateur 1" : #Si c'est le mode IA aléatoire, on lance la fonction 
+							changerCouleur()
 							IAaleatoire()
 
 						elif mode == "Joueur VS Ordinateur 2" : #Si c'est le mode IA aléatoire, on lance la fonction 
+							changerCouleur()
 							IAplus()
 					
 			else:
@@ -198,76 +200,158 @@ def IAplus():
 		listePiecesIA.remove(premierePiece)
 		cleHasard = caseLibre(premierePiece[1])
 		placerPiece(cleHasard, premierePiece[1], listePiecesIA2[tirage])
+		listePiecesIA3.append(listePiecesIA2[tirage])
 		del listePiecesIA2[tirage]
 		setCase(cleHasard, 2, premierePiece[1])
 	else:
-		#mettre mode défense ici, si on peut rien faire en mode défense on passe en mode attaque:
-
 		piecePlacee = False
-		if (len(listePiecesIA) > 0) :
-			lignesPossibles = calculNbPiecesRouges() #renvoie la liste des lignes possibles (une ligne possible = une liste où l'IA a posé le + de pièces)
-			last = len(listePiecesIA)-1
-			plusGrossePiece = listePiecesIA[last]
-			print("Lignes possibles : ", lignesPossibles)
 
-			for ligne in lignesPossibles:
-				if(getNbPieces(ligne[0]) > 0):
-					if (getCouleur(ligne[0],getDernierePiece(ligne[0])) != 2 and piecePlacee == False):
-						if (canAdd(ligne[0], plusGrossePiece[1])):
-							listePiecesIA.remove(plusGrossePiece)
-							placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
-							del listePiecesIA2[last]
-							setCase(ligne[0], 2, plusGrossePiece[1])
-							piecePlacee = True
-				else:
-					if (piecePlacee == False):
+		#Mode Défense (l'IA bloque le joueur s'il aligne 2 pièces, et s'il peut rien faire il passe en mode attaque)
+
+		lignesJoueur = calculNbPiecesBleues() #renvoie la liste des lignes où le joueur a 2 pièces alignées
+		last = len(listePiecesIA)-1
+		plusGrossePiece = listePiecesIA[last]
+		print("Lignes joueur : ", lignesJoueur)
+
+		for ligne in lignesJoueur:
+			if(getNbPieces(ligne[0]) > 0):
+				if (getCouleur(ligne[0],getDernierePiece(ligne[0])) != 2 and piecePlacee == False):
+					if (canAdd(ligne[0], plusGrossePiece[1])):
 						listePiecesIA.remove(plusGrossePiece)
 						placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
+						listePiecesIA3.append(listePiecesIA2[last])
 						del listePiecesIA2[last]
 						setCase(ligne[0], 2, plusGrossePiece[1])
 						piecePlacee = True
+			else:
+				if (piecePlacee == False):
+					listePiecesIA.remove(plusGrossePiece)
+					placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
+					listePiecesIA3.append(listePiecesIA2[last])
+					del listePiecesIA2[last]
+					setCase(ligne[0], 2, plusGrossePiece[1])
+					piecePlacee = True
 
-				if(getNbPieces(ligne[1]) > 0):
-					if (getCouleur(ligne[1],getDernierePiece(ligne[1])) != 2 and piecePlacee == False):
-						if (canAdd(ligne[1], plusGrossePiece[1])):
-							listePiecesIA.remove(plusGrossePiece)
-							placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
-							del listePiecesIA2[last]
-							setCase(ligne[1], 2, plusGrossePiece[1])
-							piecePlacee = True
-				else:
-					if (piecePlacee == False):
+			if(getNbPieces(ligne[1]) > 0):
+				if (getCouleur(ligne[1],getDernierePiece(ligne[1])) != 2 and piecePlacee == False):
+					if (canAdd(ligne[1], plusGrossePiece[1])):
 						listePiecesIA.remove(plusGrossePiece)
 						placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
+						listePiecesIA3.append(listePiecesIA2[last])
 						del listePiecesIA2[last]
 						setCase(ligne[1], 2, plusGrossePiece[1])
 						piecePlacee = True
+			else:
+				if (piecePlacee == False):
+					listePiecesIA.remove(plusGrossePiece)
+					placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
+					listePiecesIA3.append(listePiecesIA2[last])
+					del listePiecesIA2[last]
+					setCase(ligne[1], 2, plusGrossePiece[1])
+					piecePlacee = True
 
-				if(getNbPieces(ligne[2]) > 0):
-					if (getCouleur(ligne[2],getDernierePiece(ligne[2])) != 2 and piecePlacee == False):
-						if (canAdd(ligne[2], plusGrossePiece[1])):
-							listePiecesIA.remove(plusGrossePiece)
-							placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
-							del listePiecesIA2[last]
-							setCase(ligne[2], 2, plusGrossePiece[1])
-							piecePlacee = True
-				else:
-					if (piecePlacee == False):
+			if(getNbPieces(ligne[2]) > 0):
+				if (getCouleur(ligne[2],getDernierePiece(ligne[2])) != 2 and piecePlacee == False):
+					if (canAdd(ligne[2], plusGrossePiece[1])):
 						listePiecesIA.remove(plusGrossePiece)
 						placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
+						listePiecesIA3.append(listePiecesIA2[last])
 						del listePiecesIA2[last]
 						setCase(ligne[2], 2, plusGrossePiece[1])
 						piecePlacee = True
+			else:
+				if (piecePlacee == False):
+					listePiecesIA.remove(plusGrossePiece)
+					placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
+					listePiecesIA3.append(listePiecesIA2[last])
+					del listePiecesIA2[last]
+					setCase(ligne[2], 2, plusGrossePiece[1])
+					piecePlacee = True
+		
 
-			if (piecePlacee == False): #Si après avoir testé toutes les lignes possibles, aucun cas n'est envisageable, on place alors une case au hasard
-				tirage = randrange(0,len(listePiecesIA))
-				piece = listePiecesIA[tirage]
-				listePiecesIA.remove(piece)
-				cleHasard = caseLibre(piece[1])
-				placerPiece(cleHasard, piece[1], listePiecesIA2[tirage])
-				del listePiecesIA2[tirage]
-				setCase(cleHasard, 2, piece[1])
-				piecePlacee = True
+		if (piecePlacee == False): #Mode Attaque (l'IA place ses pièces dans le but de gagner, il essaye d'aligner une ligne)
+			if (len(listePiecesIA) > 0) :
+				lignesPossibles = calculNbPiecesRouges() #renvoie la liste des lignes possibles (une ligne possible = une liste où l'IA a posé le + de pièces)
+				last = len(listePiecesIA)-1
+				plusGrossePiece = listePiecesIA[last]
+				print("Lignes possibles : ", lignesPossibles)
+
+				for ligne in lignesPossibles:
+					if(getNbPieces(ligne[0]) > 0):
+						if (getCouleur(ligne[0],getDernierePiece(ligne[0])) != 2 and piecePlacee == False):
+							if (canAdd(ligne[0], plusGrossePiece[1])):
+								listePiecesIA.remove(plusGrossePiece)
+								placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
+								listePiecesIA3.append(listePiecesIA2[last])
+								del listePiecesIA2[last]
+								setCase(ligne[0], 2, plusGrossePiece[1])
+								piecePlacee = True
+					else:
+						if (piecePlacee == False):
+							listePiecesIA.remove(plusGrossePiece)
+							placerPiece(ligne[0], plusGrossePiece[1], listePiecesIA2[last])
+							listePiecesIA3.append(listePiecesIA2[last])
+							del listePiecesIA2[last]
+							setCase(ligne[0], 2, plusGrossePiece[1])
+							piecePlacee = True
+
+					if(getNbPieces(ligne[1]) > 0):
+						if (getCouleur(ligne[1],getDernierePiece(ligne[1])) != 2 and piecePlacee == False):
+							if (canAdd(ligne[1], plusGrossePiece[1])):
+								listePiecesIA.remove(plusGrossePiece)
+								placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
+								listePiecesIA3.append(listePiecesIA2[last])
+								del listePiecesIA2[last]
+								setCase(ligne[1], 2, plusGrossePiece[1])
+								piecePlacee = True
+					else:
+						if (piecePlacee == False):
+							listePiecesIA.remove(plusGrossePiece)
+							placerPiece(ligne[1], plusGrossePiece[1], listePiecesIA2[last])
+							listePiecesIA3.append(listePiecesIA2[last])
+							del listePiecesIA2[last]
+							setCase(ligne[1], 2, plusGrossePiece[1])
+							piecePlacee = True
+
+					if(getNbPieces(ligne[2]) > 0):
+						if (getCouleur(ligne[2],getDernierePiece(ligne[2])) != 2 and piecePlacee == False):
+							if (canAdd(ligne[2], plusGrossePiece[1])):
+								listePiecesIA.remove(plusGrossePiece)
+								placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
+								listePiecesIA3.append(listePiecesIA2[last])
+								del listePiecesIA2[last]
+								setCase(ligne[2], 2, plusGrossePiece[1])
+								piecePlacee = True
+					else:
+						if (piecePlacee == False):
+							listePiecesIA.remove(plusGrossePiece)
+							placerPiece(ligne[2], plusGrossePiece[1], listePiecesIA2[last])
+							listePiecesIA3.append(listePiecesIA2[last])
+							del listePiecesIA2[last]
+							setCase(ligne[2], 2, plusGrossePiece[1])
+							piecePlacee = True
+
+				if (piecePlacee == False): #Si après avoir testé toutes les lignes possibles, aucun cas n'est envisageable, on place alors une case au hasard
+					tirage = randrange(0,len(listePiecesIA))
+					piece = listePiecesIA[tirage]
+					listePiecesIA.remove(piece)
+					cleHasard = caseLibre(piece[1])
+					placerPiece(cleHasard, piece[1], listePiecesIA2[tirage])
+					listePiecesIA3.append(listePiecesIA2[last])
+					del listePiecesIA2[tirage]
+					setCase(cleHasard, 2, piece[1])
+					piecePlacee = True
+			if (len(listePiecesIA) == 0):
+				print("liste nulle")
+
+		"""else:
+			tirage = randrange(0,len(listePiecesIA3))  #Tirage au sort d'une pièce parmi les pièces placées
+			pieceHasard = listePiecesIA3[tirage]
+			taillePieceHasard = taille(Canevas.coords(pieceHasard))
+			cleHasard = caseLibre(taillePieceHasard)
+			placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
+			setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau"""
+		
 
 
 #... pas fini
@@ -276,31 +360,32 @@ def IAplus():
 	nbCoups(couleurJoueur)
 	changerCouleur()
 
-def calculNbPiecesRougesLigne(x,y,u,v,t,z):
+
+def calculNbPiecesLigne(x,y,u,v,t,z,col):
 	nb = 0
 	if(getNbPieces((x,y)) > 0):
-		if (getCouleur((x,y),getDernierePiece((x,y))) == 2):
+		if (getCouleur((x,y),getDernierePiece((x,y))) == col):
 			nb+=1
 	if(getNbPieces((u,v)) > 0):
-		if (getCouleur((u,v),getDernierePiece((u,v))) == 2):
+		if (getCouleur((u,v),getDernierePiece((u,v))) == col):
 			nb+=1
 	if(getNbPieces((t,z)) > 0):
-		if (getCouleur((t,z),getDernierePiece((t,z))) == 2):
+		if (getCouleur((t,z),getDernierePiece((t,z))) == col):
 			nb+=1
 	return nb
 
 def calculNbPiecesRouges():
 	#Lignes horizontales :
-	n1 = calculNbPiecesRougesLigne(0,0,1,0,2,0)
-	n2 = calculNbPiecesRougesLigne(0,1,1,1,2,1)
-	n3 = calculNbPiecesRougesLigne(0,2,1,2,2,2)
+	n1 = calculNbPiecesLigne(0,0,1,0,2,0,2)
+	n2 = calculNbPiecesLigne(0,1,1,1,2,1,2)
+	n3 = calculNbPiecesLigne(0,2,1,2,2,2,2)
 	#Lignes verticales :
-	n4 = calculNbPiecesRougesLigne(0,0,0,1,0,2)
-	n5 = calculNbPiecesRougesLigne(1,0,1,1,1,2)
-	n6 = calculNbPiecesRougesLigne(2,0,2,1,2,2)
+	n4 = calculNbPiecesLigne(0,0,0,1,0,2,2)
+	n5 = calculNbPiecesLigne(1,0,1,1,1,2,2)
+	n6 = calculNbPiecesLigne(2,0,2,1,2,2,2)
 	#Diagonales :
-	n7 = calculNbPiecesRougesLigne(0,0,1,1,2,2)
-	n8 = calculNbPiecesRougesLigne(2,0,1,1,0,2)
+	n7 = calculNbPiecesLigne(0,0,1,1,2,2,2)
+	n8 = calculNbPiecesLigne(2,0,1,1,0,2,2)
 	l=[]
 	l.append(n1)
 	l.append(n2)
@@ -329,6 +414,37 @@ def calculNbPiecesRouges():
 	if (n8 == max):
 		res.append([(2,0),(1,1),(0,2)])
 	return res
+
+def calculNbPiecesBleues():
+	#Lignes horizontales :
+	n1 = calculNbPiecesLigne(0,0,1,0,2,0,1)
+	n2 = calculNbPiecesLigne(0,1,1,1,2,1,1)
+	n3 = calculNbPiecesLigne(0,2,1,2,2,2,1)
+	#Lignes verticales :
+	n4 = calculNbPiecesLigne(0,0,0,1,0,2,1)
+	n5 = calculNbPiecesLigne(1,0,1,1,1,2,1)
+	n6 = calculNbPiecesLigne(2,0,2,1,2,2,1)
+	#Diagonales :
+	n7 = calculNbPiecesLigne(0,0,1,1,2,2,1)
+	n8 = calculNbPiecesLigne(2,0,1,1,0,2,1)
+	res =  []
+	if (n1 == 2):
+		res.append([(0,0),(1,0),(2,0)])
+	if (n2 == 2):
+		res.append([(0,1),(1,1),(2,1)])
+	if (n3 == 2):
+		res.append([(0,2),(1,2),(2,2)])
+	if (n4 == 2):
+		res.append([(0,0),(0,1),(0,2)])
+	if (n5 == 2):
+		res.append([(1,0),(1,1),(1,2)])
+	if (n6 == 2):
+		res.append([(2,0),(2,1),(2,2)])
+	if (n7 == 2):
+		res.append([(0,0),(1,1),(2,2)])
+	if (n8 == 2):
+		res.append([(2,0),(1,1),(0,2)])
+	return res
 		
 
 def getMax(liste):
@@ -347,6 +463,7 @@ def caseLibre(taille):
 			if (canAdd((int(i),int(j)), taille)):
 				listeCasesDispo.append(((int(i),int(j))))
 	cleHasard = listeCasesDispo[randrange(0,len(listeCasesDispo))]
+	print("Cle hasard : ", cleHasard)
 	return cleHasard
 
 
@@ -537,8 +654,9 @@ def modifJoueur():
 	
 def Effacer():
 	Canevas.delete(ALL)
+
 def rejouer():
-	global victoire, coupsJ1, coupsJ2
+	global victoire, coupsJ1, coupsJ2, couleurJoueur
 	Effacer()
 	couleurJoueur='blue'
 	coupsJ1=0
@@ -558,6 +676,7 @@ def fermerFenetre():
 		menuQuitter()
 	if choix=="jeu":
 		maFenetreQuitter()
+		couleurJoueur='blue'
 	else:
 		menuQuitter_option()
 	
@@ -873,7 +992,7 @@ if __name__ == '__main__':
 
 			cadre.pack(fill=BOTH)
 			monFont=tkFont.Font(family='Helvetica', size=36, weight='bold')
-			menu = PhotoImage(file ='menu.gif')
+			#menu = PhotoImage(file ='menu.gif')
 				
 		#canvas.pack()
 
