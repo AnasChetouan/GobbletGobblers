@@ -972,6 +972,7 @@ if __name__ == '__main__':
 
 		if choix=="option":
 			fenetreOption = Tk()
+			fenetreOption.title('Gobblet Gobblers')
 			fenetreOption.geometry('550x450+420+220')
 		# Entete de la page
 
@@ -1036,7 +1037,7 @@ if __name__ == '__main__':
 		if choix=="menu":
 			menu2 = Tk()
 			#var = IntVar()
-			menu2.title('menu 2')
+			menu2.title('Gobblet Gobblers')
 			menu2.geometry('550x650+420+220')
 
 			canvas = Canvas(menu2, width=550, height=120, bg= 'black')
