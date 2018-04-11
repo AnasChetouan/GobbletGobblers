@@ -197,8 +197,13 @@ def IAaleatoire():
 				taillePieceHasard = taille(Canevas.coords(pieceHasard))
 				cleHasard = caseLibre(taillePieceHasard)
 
+		ancienneCaseX = Canevas.coords(pieceHasard)[0]
+		ancienneCaseY = Canevas.coords(pieceHasard)[1]
+		print("case avant delete : ",plateau[whatCase(ancienneCaseX, ancienneCaseY)])
+		deleteDernierePiece( whatCase(ancienneCaseX, ancienneCaseY))
 		placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-		deleteDernierePiece( whatCase( Canevas.coords(pieceHasard)[0], Canevas.coords(pieceHasard)[1] ))
+		print( "TEST DELETE", whatCase(ancienneCaseX,ancienneCaseY))
+		print("case après delete : ",plateau[whatCase(ancienneCaseX,ancienneCaseY)])
 		setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau
 		
 	checkVictoire()
@@ -294,9 +299,13 @@ def IAplus():
 					pieceHasard = listeIA4[tirage]
 					taillePieceHasard = taille(Canevas.coords(pieceHasard))
 					cleHasard = caseLibre(taillePieceHasard)
-
+			ancienneCaseX = Canevas.coords(pieceHasard)[0]
+			ancienneCaseY = Canevas.coords(pieceHasard)[1]
+			print("case avant delete : ",plateau[whatCase(ancienneCaseX, ancienneCaseY)])
+			deleteDernierePiece( whatCase(ancienneCaseX, ancienneCaseY))
 			placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-			deleteDernierePiece( whatCase( Canevas.coords(pieceHasard)[0], Canevas.coords(pieceHasard)[1] ))
+			print( "TEST DELETE", whatCase(ancienneCaseX,ancienneCaseY))
+			print("case après delete : ",plateau[whatCase(ancienneCaseX,ancienneCaseY)])
 			setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau
 			piecePlacee = True
 
@@ -728,12 +737,14 @@ def fermerFenetre():
 		menuQuitter()
 	if choix=="jeu":
 		maFenetreQuitter()
-		couleurJoueur='blue'
 	else:
 		menuQuitter_option()
 	
 	
 def maFenetreQuitter():
+	global couleurJoueur, tourJoueur
+	couleurJoueur='blue'
+	tourJoueur = 'Joueur 1'
 	modifChoix("menu")
 	Mafenetre.destroy()
 
@@ -964,7 +975,7 @@ if __name__ == '__main__':
 			fenetreOption.geometry('550x450+420+220')
 		# Entete de la page
 
-			Entete=Label(fenetreOption, text='Option', font=("Helvetica", 25), fg="orange")
+			Entete=Label(fenetreOption, text='Options', font=("Helvetica", 25), fg="orange")
 			Entete.pack()
 
 
@@ -1028,11 +1039,11 @@ if __name__ == '__main__':
 			menu2.title('menu 2')
 			menu2.geometry('550x650+420+220')
 
-			canvas = Canvas(menu2, width=550, height=120, bg= 'light blue')
-			canvas.create_rectangle(0, 0, 60, 120, outline='black', fill='blue')
-			canvas.create_rectangle(490, 0, 550, 120, outline='black', fill='red')
-			_font= ('Times', 36, 'bold')
-			canvas.create_text(280, 50, text="Gobblet-Gobblers", font= _font, fill='black')
+			canvas = Canvas(menu2, width=550, height=120, bg= 'black')
+			canvas.create_rectangle(0, 0, 60, 120, outline='black', fill='light grey')
+			canvas.create_rectangle(490, 0, 550, 120, outline='black', fill='light grey')
+			_font= ('oswald', 28, 'bold')
+			canvas.create_text(280, 50, text="Gobblet-Gobblers", font= _font, fill='yellow')
 			canvas.pack()
 
 			def exit():
@@ -1040,7 +1051,7 @@ if __name__ == '__main__':
 				global stop
 				stop=True
 
-			cadre=Frame(menu2, width=450, height=450, borderwidth=2,bg= 'light blue')
+			cadre=Frame(menu2, width=450, height=450, borderwidth=2,bg= '#FFFFF0')
 
 			cadre.pack(fill=BOTH)
 			monFont=tkFont.Font(family='Helvetica', size=36, weight='bold')
