@@ -487,43 +487,44 @@ def StopForWin():
 	cleFinish = (-1, -1)
 	#print("lignes finish", lignes)
 	for ligne in lignes:
+		print("ligne finish", ligne)
 		dispo = []
-		dispo2 = []
+		dispo2 = listePiecesIA2
 		cle1 = ligne[0]
 		cle2 = ligne[1]
 		cle3 = ligne[2]
 		if(getNbPieces(cle1) > 0):
 			if (getCouleur(cle1,getDernierePiece(cle1)) == 1):
 				dispo = listeCasesDispoSauf2(cle2, cle3, listePiecesIA3)
-				dispo2 = listeCasesDispoSauf2(cle2, cle3, listePiecesIA2)
+				#dispo2 = listeCasesDispoSauf2(cle2, cle3, listePiecesIA2)
 				cleFinish = cle1
 		else:
 			dispo = listeCasesDispoSauf2(cle2, cle3, listePiecesIA3)
-			dispo2 = listeCasesDispoSauf2(cle2, cle3, listePiecesIA2)
+			#dispo2 = listeCasesDispoSauf2(cle2, cle3, listePiecesIA2)
 			cleFinish = cle1
 
 		if(getNbPieces(cle2) > 0):
 			if (getCouleur(cle2,getDernierePiece(cle2)) == 1):
 				dispo = listeCasesDispoSauf2(cle1, cle3, listePiecesIA3)
-				dispo2 = listeCasesDispoSauf2(cle1, cle3, listePiecesIA2)
+				#dispo2 = listeCasesDispoSauf2(cle1, cle3, listePiecesIA2)
 				cleFinish = cle2
 		else:
 			dispo = listeCasesDispoSauf2(cle1, cle3, listePiecesIA3)
-			dispo2 = listeCasesDispoSauf2(cle1, cle3, listePiecesIA2)
+			#dispo2 = listeCasesDispoSauf2(cle1, cle3, listePiecesIA2)
 			cleFinish = cle2
 
 		if(getNbPieces(cle3) > 0):
 			if (getCouleur(cle3,getDernierePiece(cle3)) == 1):
 				dispo = listeCasesDispoSauf2(cle1, cle2, listePiecesIA3)
-				dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
+				#dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
 				cleFinish = cle3
 		else:
 			dispo = listeCasesDispoSauf2(cle1, cle2, listePiecesIA3)
-			dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
+			#dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
 			cleFinish = cle3
 
-		#print("cle fin", cleFinish)
-		#print("dispo", dispo)
+		print("cle fin", cleFinish)
+		print("dispo", dispo)
 		if (len(dispo2) != 0):
 			if(cleFinish != (-1,-1)):
 				for piece in dispo2:
@@ -531,13 +532,13 @@ def StopForWin():
 					indicePiece = getIndPieceFromListe(piece, listePiecesIA2)
 					if (canAdd(cleFinish, taillePiece)):
 								del listePiecesIA[indicePiece]
-								placerPiece(saveCaseVide, taillePiece, listePiecesIA2[indicePiece])
+								placerPiece(cleFinish, taillePiece, listePiecesIA2[indicePiece])
 								listePiecesIA3.append(listePiecesIA2[indicePiece])
 								del listePiecesIA2[indicePiece]
 								setCase(cleFinish, 2, taillePiece)
 								return True
 
-		#print("dispo2", dispo2)
+		print("dispo2", dispo2)
 		if (len(dispo) != 0):
 			if(cleFinish != (-1,-1)):
 				for piece in dispo:
