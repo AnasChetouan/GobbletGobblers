@@ -312,8 +312,7 @@ def IAplus():
 						print("depPossibles", depPossibles)
 						fus = fusionListes(l1, depPossibles)
 						if (len(fus) > 0):
-							last = len(fus)-1
-							piece = fus[last]
+							piece = choixPieceADep(fus)
 							taillePiece = taille(Canevas.coords(piece))
 							ancienneCaseX = Canevas.coords(piece)[0]
 							ancienneCaseY = Canevas.coords(piece)[1]
@@ -345,8 +344,8 @@ def IAplus():
 						fus = fusionListes(listeGrossesDispo, depPossibles)
 						#print("fusion", fus)
 						if (len(fus) > 0):
-							last = len(fus)-1
-							piece = fus[last]
+							#last = len(fus)-1
+							piece = choixPieceADep(fus)
 							taillePiece = taille(Canevas.coords(piece))
 							ancienneCaseX = Canevas.coords(piece)[0]
 							ancienneCaseY = Canevas.coords(piece)[1]
@@ -380,8 +379,8 @@ def IAplus():
 									print("pas de case vide pour placer moyenne pièce")
 							else:
 								if (len(fus) > 0):
-									last = len(fus)-1
-									piece = fus[last]
+									#last = len(fus)-1
+									piece = choixPieceADep(fus)
 									taillePiece = taille(Canevas.coords(piece))
 									ancienneCaseX = Canevas.coords(piece)[0]
 									ancienneCaseY = Canevas.coords(piece)[1]
@@ -481,13 +480,26 @@ def IAplus():
 	nbCoups(couleurJoueur)
 	changerCouleur()
 
+def choixPieceADep(l):
+# Cette fonction fait en sorte que la pièce du milieu ne bouge pas et de déplacer une autre pièce si possible
+	choix = l[0]
+	print("l", l)
+	for piece in l:
+		CaseX = Canevas.coords(piece)[0]
+		CaseY = Canevas.coords(piece)[1]
+		cle = whatCase(CaseX, CaseY)
+		if (cle != (1,1)):
+			choix = piece
+	print("choix", choix)
+	return choix
+
 def StopForWin():
 	global listePiecesIA3
 	lignes = calculNbPiecesRougesVer2()
 	cleFinish = (-1, -1)
 	#print("lignes finish", lignes)
 	for ligne in lignes:
-		print("ligne finish", ligne)
+		#print("ligne finish", ligne)
 		dispo = []
 		dispo2 = listePiecesIA2
 		cle1 = ligne[0]
@@ -523,8 +535,8 @@ def StopForWin():
 			#dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
 			cleFinish = cle3
 
-		print("cle fin", cleFinish)
-		print("dispo", dispo)
+		#print("cle fin", cleFinish)
+		#print("dispo", dispo)
 		if (len(dispo2) != 0):
 			if(cleFinish != (-1,-1)):
 				for piece in dispo2:
@@ -538,7 +550,7 @@ def StopForWin():
 								setCase(cleFinish, 2, taillePiece)
 								return True
 
-		print("dispo2", dispo2)
+		#print("dispo2", dispo2)
 		if (len(dispo) != 0):
 			if(cleFinish != (-1,-1)):
 				for piece in dispo:
@@ -645,16 +657,16 @@ def genereFailleAutour(cle):
 	if(cle == (2,0)):
 		return checkLigneVer3(cle,0,0,1,0) or checkLigneVer3(cle,2,1,2,2) or checkLigneVer3(cle,1,1,0,0)
 
-	if(cle == (1,0)):
+	if(cle == (0,1)):
 		return checkLigneVer3(cle,1,1,1,2) or checkLigneVer3(cle,0,0,0,2)
 	if(cle == (1,1)):
 		return checkLigneVer3(cle,1,0,1,2) or checkLigneVer3(cle,0,1,0,2) or checkLigneVer3(cle,0,0,2,2) or checkLigneVer3(cle,0,2,2,0)
-	if(cle == (1,2)):
+	if(cle == (2,1)):
 		return checkLigneVer3(cle,1,0,1,1) or checkLigneVer3(cle,0,2,2,2)
 
-	if(cle == (2,0)):
+	if(cle == (0,2)):
 		return checkLigneVer3(cle,2,1,2,2) or checkLigneVer3(cle,0,0,1,0)
-	if(cle == (2,1)):
+	if(cle == (1,2)):
 		return checkLigneVer3(cle,2,0,2,2) or checkLigneVer3(cle,1,1,0,1)
 	if(cle == (2,2)):
 		return checkLigneVer3(cle,2,0,2,1) or checkLigneVer3(cle,0,2,1,2) or checkLigneVer3(cle,1,1,0,0)
@@ -698,16 +710,16 @@ def genereFailleDessous(cle):
 	if(cle == (2,0)):
 		return checkLigneVer2(cle,0,0,1,0) or checkLigneVer2(cle,2,1,2,2) or checkLigneVer2(cle,1,1,0,0)
 
-	if(cle == (1,0)):
+	if(cle == (0,1)):
 		return checkLigneVer2(cle,1,1,1,2) or checkLigneVer2(cle,0,0,0,2)
 	if(cle == (1,1)):
 		return checkLigneVer2(cle,1,0,1,2) or checkLigneVer2(cle,0,1,0,2) or checkLigneVer2(cle,0,0,2,2) or checkLigneVer2(cle,0,2,2,0)
-	if(cle == (1,2)):
+	if(cle == (2,1)):
 		return checkLigneVer2(cle,1,0,1,1) or checkLigneVer2(cle,0,2,2,2)
 
-	if(cle == (2,0)):
+	if(cle == (0,2)):
 		return checkLigneVer2(cle,2,1,2,2) or checkLigneVer2(cle,0,0,1,0)
-	if(cle == (2,1)):
+	if(cle == (1,2)):
 		return checkLigneVer2(cle,2,0,2,2) or checkLigneVer2(cle,1,1,0,1)
 	if(cle == (2,2)):
 		return checkLigneVer2(cle,2,0,2,1) or checkLigneVer2(cle,0,2,1,2) or checkLigneVer2(cle,1,1,0,0)
@@ -1228,7 +1240,7 @@ def checkLigne(x,y,u,v,t,z):
 			if(getNbPieces((t,z)) > 0):
 				c3 = getCouleur((t,z),getDernierePiece((t,z)))
 				if(c1 == c2 and c2 == c3):
-					ligneGagnante=((x,y),(u,v),(t,z))	
+					ligneGagnante=((x,y),(u,v),(t,z))
 					victoire = True
 					gagnant=c1
 
