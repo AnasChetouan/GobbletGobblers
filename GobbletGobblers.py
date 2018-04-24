@@ -200,11 +200,11 @@ def IAaleatoire():
 
 		ancienneCaseX = Canevas.coords(pieceHasard)[0]
 		ancienneCaseY = Canevas.coords(pieceHasard)[1]
-		print("case avant delete : ",plateau[whatCase(ancienneCaseX, ancienneCaseY)])
+		#print("case avant delete : ",plateau[whatCase(ancienneCaseX, ancienneCaseY)])
 		deleteDernierePiece( whatCase(ancienneCaseX, ancienneCaseY))
 		placerPiece(cleHasard, taillePieceHasard, pieceHasard) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-		print( "TEST DELETE", whatCase(ancienneCaseX,ancienneCaseY))
-		print("case après delete : ",plateau[whatCase(ancienneCaseX,ancienneCaseY)])
+		#print( "TEST DELETE", whatCase(ancienneCaseX,ancienneCaseY))
+		#print("case après delete : ",plateau[whatCase(ancienneCaseX,ancienneCaseY)])
 		setCase(cleHasard, 2, taillePieceHasard) #On met les données dans le plateau
 		
 	checkVictoire()
@@ -259,7 +259,6 @@ def IAplus():
 		lignesJoueur = calculNbPiecesBleues() #renvoie la liste des lignes où le joueur a 2 pièces alignées
 		print("Lignes joueur : ", lignesJoueur)
 
-
 		testWin = StopForWin()
 		print("TEST WIN", testWin)
 
@@ -296,7 +295,8 @@ def IAplus():
 					l2 = getTailleFromListe(listePiecesIA2, tailleMinEnnemie+1) #Liste des pièces compatibles depuis la liste des pièces pas encore placées
 
 					if (len(l2) > 0):
-						piece = l2[0]
+						last = len(l2)-1
+						piece = l2[last]
 						taillePiece = taille(Canevas.coords(piece))
 						indicePiece = getIndPieceFromListe(piece, listePiecesIA2)
 						if (canAdd(ligne[posTailleMin], taillePiece)):
@@ -313,7 +313,8 @@ def IAplus():
 						print("depPossibles", depPossibles)
 						fus = fusionListes(l1, depPossibles)
 						if (len(fus) > 0):
-							piece = fus[0]
+							last = len(fus)-1
+							piece = fus[last]
 							taillePiece = taille(Canevas.coords(piece))
 							ancienneCaseX = Canevas.coords(piece)[0]
 							ancienneCaseY = Canevas.coords(piece)[1]
@@ -326,16 +327,17 @@ def IAplus():
 							print("peut pas donc on attaque") #attaque
 					else:
 						print("PEUT PAS COUVRIR")
-						print("case vide", saveCaseVide)
+						#print("case vide", saveCaseVide)
 						listeGrossesDispo = getTailleFromListe(listePiecesIA3, 3)
-						print("listePiecesIA3:", listePiecesIA3)
-						print("listeGrossesDispo", listeGrossesDispo)
+						#print("listePiecesIA3:", listePiecesIA3)
+						#print("listeGrossesDispo", listeGrossesDispo)
 						depPossibles = deplacementsPossibles(2, listePiecesIA3)
-						print("depPossibles", depPossibles)
+						#print("depPossibles", depPossibles)
 						fus = fusionListes(listeGrossesDispo, depPossibles)
-						print("fusion", fus)
+						#print("fusion", fus)
 						if (len(fus) > 0):
-							piece = fus[0]
+							last = len(fus)-1
+							piece = fus[last]
 							taillePiece = taille(Canevas.coords(piece))
 							ancienneCaseX = Canevas.coords(piece)[0]
 							ancienneCaseY = Canevas.coords(piece)[1]
@@ -354,7 +356,8 @@ def IAplus():
 							listeMoyennesDispoPlat = getTailleFromListe(listePiecesIA3,2)
 							fus = fusionListes(listeMoyennesDispoPlat, depPossibles)
 							if(len(listeMoyennesDispoCote) > 0):
-								piece = listeMoyennesDispoCote[0]
+								last = len(listeMoyennesDispoCote)-1
+								piece = listeMoyennesDispoCote[last]
 								taillePiece = taille(Canevas.coords(piece))
 								indicePiece = getIndPieceFromListe(piece, listePiecesIA2)
 								if (canAdd(saveCaseVide, taillePiece)):
@@ -368,7 +371,8 @@ def IAplus():
 									print("pas de case vide pour placer moyenne pièce")
 							else:
 								if (len(fus) > 0):
-									piece = fus[0]
+									last = len(fus)-1
+									piece = fus[last]
 									taillePiece = taille(Canevas.coords(piece))
 									ancienneCaseX = Canevas.coords(piece)[0]
 									ancienneCaseY = Canevas.coords(piece)[1]
@@ -472,48 +476,73 @@ def StopForWin():
 	global listePiecesIA3
 	lignes = calculNbPiecesRougesVer2()
 	cleFinish = (-1, -1)
+	print("lignes finish", lignes)
 	for ligne in lignes:
 		dispo = []
+		dispo2 = []
 		cle1 = ligne[0]
 		cle2 = ligne[1]
 		cle3 = ligne[2]
 		if(getNbPieces(cle1) > 0):
 			if (getCouleur(cle1,getDernierePiece(cle1)) == 1):
 				dispo = listeCasesDispoSauf2(cle2, cle3, listePiecesIA3)
+				dispo2 = listeCasesDispoSauf2(cle2, cle3, listePiecesIA2)
 				cleFinish = cle1
 		else:
+			dispo = listeCasesDispoSauf2(cle2, cle3, listePiecesIA3)
+			dispo2 = listeCasesDispoSauf2(cle2, cle3, listePiecesIA2)
 			cleFinish = cle1
 
 		if(getNbPieces(cle2) > 0):
 			if (getCouleur(cle2,getDernierePiece(cle2)) == 1):
 				dispo = listeCasesDispoSauf2(cle1, cle3, listePiecesIA3)
+				dispo2 = listeCasesDispoSauf2(cle1, cle3, listePiecesIA2)
 				cleFinish = cle2
 		else:
+			dispo = listeCasesDispoSauf2(cle1, cle3, listePiecesIA3)
+			dispo2 = listeCasesDispoSauf2(cle1, cle3, listePiecesIA2)
 			cleFinish = cle2
 
 		if(getNbPieces(cle3) > 0):
 			if (getCouleur(cle3,getDernierePiece(cle3)) == 1):
 				dispo = listeCasesDispoSauf2(cle1, cle2, listePiecesIA3)
+				dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
 				cleFinish = cle3
 		else:
+			dispo = listeCasesDispoSauf2(cle1, cle2, listePiecesIA3)
+			dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
 			cleFinish = cle3
 
+		print("cle fin", cleFinish)
+		print("dispo", dispo)
+		if (len(dispo2) != 0):
+			if(cleFinish != (-1,-1)):
+				for piece in dispo2:
+					taillePiece = taille(Canevas.coords(piece))
+					indicePiece = getIndPieceFromListe(piece, listePiecesIA2)
+					if (canAdd(cleFinish, taillePiece)):
+								del listePiecesIA[indicePiece]
+								placerPiece(saveCaseVide, taillePiece, listePiecesIA2[indicePiece])
+								listePiecesIA3.append(listePiecesIA2[indicePiece])
+								del listePiecesIA2[indicePiece]
+								setCase(cleFinish, 2, taillePiece)
+								return True
+
+		print("dispo2", dispo2)
 		if (len(dispo) != 0):
-			for piece in dispo:
-				taillePiece = taille(Canevas.coords(piece))
-				CaseX = Canevas.coords(piece)[0]
-				CaseY = Canevas.coords(piece)[1]
-				if (canAdd(cleFinish, taillePiece)):
-							ancienneCaseX = Canevas.coords(piece)[0]
-							ancienneCaseY = Canevas.coords(piece)[1]
-							deleteDernierePiece(whatCase(ancienneCaseX, ancienneCaseY))
-							placerPiece(cleFinish, taillePiece, piece) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-							setCase(cleFinish, 2, taillePiece) #On met les données dans le plateau
-							return True
+			if(cleFinish != (-1,-1)):
+				for piece in dispo:
+					taillePiece = taille(Canevas.coords(piece))
+					if (canAdd(cleFinish, taillePiece)):
+								CaseX = Canevas.coords(piece)[0]
+								CaseY = Canevas.coords(piece)[1]
+								deleteDernierePiece(whatCase(CaseX, CaseY))
+								placerPiece(cleFinish, taillePiece, piece) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
+								setCase(cleFinish, 2, taillePiece) #On met les données dans le plateau
+								return True
+
 		else:
 			return False
-
-
 
 def calculPieceMin(l):
 	i = 0
@@ -524,7 +553,7 @@ def calculPieceMin(l):
 			min = t
 			pos = i
 		i+=1
-	print("TAILLE MINI", t, "POS TAILLE MIN", pos)
+	#print("TAILLE MINI", t, "POS TAILLE MIN", pos)
 	return t, pos
 
 def getIndPieceFromListe(object, liste):
@@ -551,143 +580,26 @@ def fusionListes(l1, l2):
 
 	return res
 
-def appartientAligneGagnante(deplacement,ligneGagnante):
-	print(" ligneGagnante= ",ligneGagnante ,"-- ", deplacement)
-	return deplacement in ligneGagnante
-			
-#cette fonction va chercher s'il existe une piece à déplacer pour gagner la partie
-def searchPiece():
-	global ligneGagnante
-	piecePlacee = False
-	listeLigneRouge=calculNbPiecesRouges()
-	for ligne in listeLigneRouge : 
-		
-		cle0=ligne[0] 
-		cle1=ligne[1]
-		cle2=ligne[2] 
-		if(getNbPieces((cle0)) > 0):
-			c1 = getCouleur(cle0,getDernierePiece(cle0))
-			if(getNbPieces(cle1) > 0):
-				c2 = getCouleur(cle1,getDernierePiece(cle1))
-				if(getNbPieces(cle2) > 0):
-					c3 = getCouleur(cle2,getDernierePiece(cle2))
-					print("-------------je fait un teste---------------------" )
-					if ( c3==1 ):
-						listeIA4 = []
-						listeIA4 = deplacementsPossibles(2,listePiecesIA3)
-						print(" pour la ligne  (if )", ligne ," la bleu se trouve a", cle2, "x=",cle2[0], "y=",cle2[1])
-						print(" taille de la bleue :",getTaille( ( int(cle2[0]) ,int(cle2[1])  ),getDernierePiece( ( int(cle2[0]) ,int(cle2[1])  ))))
-						print("couleur de la bleu", couleurToString(c3), "cle de la bleu:", cle2)
-						print(" cle rouge ", cle0)
-						print("cle rouge ", cle1)
-						if(getTaille( ( int(cle2[0]) ,int(cle2[1])  ),getDernierePiece( ( int(cle2[0]) ,int(cle2[1])  ))) <3  ): 
-							
-							if(getTaille( ( int(cle0[0]) ,int(cle0[1])  ),getDernierePiece( ( int(cle0[0]) ,int(cle0[1])  ))) !=3  or   getTaille( ( int(cle1[0]) ,int(cle1[1])  ),getDernierePiece( ( int(cle1[0]) ,int(cle1[1])  ))) !=3)  :
-								tirage = randrange(0,len(listeIA4))
-								piece = listeIA4[tirage]
-								taillePiece = taille(Canevas.coords(piece))
-								while (taillePiece !=3 ): # un while pour avoir une piece rouge de taille 3
-									tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
-									piece = listeIA4[tirage]
-									taillePiece = taille(Canevas.coords(piece))
-								cle=cle2 # cle2 contient la case ou y'a la piece bleue
-								ancienneCaseX = Canevas.coords(piece)[0]
-								ancienneCaseY = Canevas.coords(piece)[1]
-								if ( appartientAligneGagnante(   whatCase(ancienneCaseX, ancienneCaseY) , (cle0, cle1, cle2) ) == False):
-									print("j'ai trouver une grande piece et elle appartient pas a la ", ligne, " et je vais gagner en ", cle2)
-									deleteDernierePiece( whatCase(ancienneCaseX, ancienneCaseY))
-									placerPiece(cle, taillePiece, piece) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-									setCase(cle, 2, taillePiece) #On met les données dans le plateau
-									piecePlacee = True
-								else:
-									print("j'ai trouver une grande piece mais elle appartient a la ", ligne)
-					else:
-
-						if( c1==1):
-							print(" pour la ligne  ", ligne ," la bleu se trouve a", cle0, "x=",cle0[0], "y=",cle0[1])
-							print(" taille de la bleue :",getTaille( ( int(cle0[0]) ,int(cle0[1])  ),getDernierePiece( ( int(cle0[0]) ,int(cle0[1])  ))))
-							print(" cle bleue  cas C1=bleu", cle0)
-							print("cle rouge ", cle1)
-							print("cle rouge ", cle2)
-
-							listeIA4 = []
-							listeIA4 = deplacementsPossibles(2,listePiecesIA3) 
-							print(" taille de la 1er rouge",getTaille( ( int(cle1[0]) ,int(cle1[1])  ),getDernierePiece( ( int(cle1[0]) ,int(cle1[1])  ))))
-							print(" taille de la 2 rouge",getTaille( ( int(cle2[0]) ,int(cle2[1])  ),getDernierePiece( ( int(cle2[0]) ,int(cle2[1])  ))))
-							print("couleur rouge 1 :", couleurToString(c2), " couleur 2 ",couleurToString(c3))
-
-							if(getTaille( ( int(cle0[0]) ,int(cle0[1])  ),getDernierePiece( ( int(cle0[0]) ,int(cle0[1])  ))) < 3):
-								if(getTaille( ( int(cle1[0]) ,int(cle1[1])  ),getDernierePiece( ( int(cle1[0]) ,int(cle1[1])  ))) !=3  or   getTaille( ( int(cle2[0]) ,int(cle2[1])  ),getDernierePiece( ( int(cle2[0]) ,int(cle2[1])  ))) !=3 )  :
-									#print(" taille de la 1er rouge",getTaille( ( int(cle0[0]) ,int(cle0[1])  ),getDernierePiece( ( int(cle0[0]) ,int(cle0[1])  ))))
-									#print(" taille de la 2 rouge",getTaille( ( int(cle2[0]) ,int(cle2[1])  ),getDernierePiece( ( int(cle2[0]) ,int(cle2[1])  ))))
-									tirage = randrange(0,len(listeIA4))
-									piece = listeIA4[tirage]
-									taillePiece = taille(Canevas.coords(piece))
-									while (taillePiece !=3):
-										tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
-										piece= listeIA4[tirage]
-										taillePiece = taille(Canevas.coords(piece))
-									cle=cle0
-									ancienneCaseX = Canevas.coords(piece)[0]
-									ancienneCaseY = Canevas.coords(piece)[1]
-									if ( appartientAligneGagnante(   whatCase(ancienneCaseX, ancienneCaseY), (cle0, cle1, cle2) ) == False):
-										print("j'ai trouver une grande piece et elle appartient pas a la ", ligne," et je vais gagner en ", cle0)
-										deleteDernierePiece( whatCase(ancienneCaseX, ancienneCaseY))
-										placerPiece(cle, taillePiece, piece) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-										setCase(cle, 2, taillePiece) #On met les données dans le plateau
-										piecePlacee = True
-									else:
-										print("j'ai trouver une grande piece mais elle appartient a la ", ligne)
-						else:
-							print(" pour la ligne  ", ligne ," la bleu se trouve a", cle1, "x=",cle1[0], "y=",cle1[1])
-							print(" taille de la bleue :",getTaille( ( int(cle1[0]) ,int(cle1[1])  ),getDernierePiece( ( int(cle1[0]) ,int(cle1[1])  ))))
-							print(" cle bleue casa c2= bleu", cle2)
-							print("cle rouge ", cle2)
-							print("cle rouge ", cle0)
-							listeIA4 = []
-							listeIA4 = deplacementsPossibles(2,listePiecesIA3) 
-
-
-							if(getTaille( ( int(cle2[0]) ,int(cle2[1])  ),getDernierePiece( ( int(cle2[0]) ,int(cle2[1])  ))) <3  ):
-								if(getTaille( ( int(cle0[0]) ,int(cle0[1])  ),getDernierePiece( ( int(cle0[0]) ,int(cle0[1])  ))) !=3  or   getTaille( ( int(cle1[0]) ,int(cle1[1])  ),getDernierePiece( ( int(cle1[0]) ,int(cle1[1])  ))) !=3 )  :
-									tirage = randrange(0,len(listeIA4))
-									piece = listeIA4[tirage]
-									taillePiece = taille(Canevas.coords(piece))
-									while (taillePiece !=3):
-										tirage = randrange(0,len(listeIA4))  #Tirage au sort d'une pièce parmi les pièces placées
-										piece= listeIA4[tirage]
-										taillePiece = taille(Canevas.coords(piece))
-									cle=cle2
-									ancienneCaseX = Canevas.coords(piece)[0]
-									ancienneCaseY = Canevas.coords(piece)[1]
-									if ( appartientAligneGagnante( whatCase(ancienneCaseX, ancienneCaseY), (cle0, cle1, cle2) ) == False):
-										print("j'ai trouver une grande piece et elle appartient pas a la ", ligne, " et je vais gagner en ", cle1)
-										deleteDernierePiece( whatCase(ancienneCaseX, ancienneCaseY))
-										placerPiece(cle, taillePiece, piece) #Deplacement de la pièce tirée au sort vers la clé tirée au sort
-										setCase(cle, 2, taillePiece) #On met les données dans le plateau
-										piecePlacee = True
-									else:
-										print("j'ai trouver une grande piece mais elle appartient a la ", ligne)
 
 def deplacementsPossibles(col, l):
 #Cette fonction renvoie seulement les pièces déjà placées qu'on peut déplacer (donc ces pièces se situent à la dernière position d'une case + leur déplacement ne permet pas une victoire ennemie)
 	coordonnees = '012'
 	res = []
-	print("l :", l)
+	#print("l :", l)
 	for piece in l:
 		possible = False
 		X = Canevas.coords(piece)[0]
 		Y = Canevas.coords(piece)[1]
-		print("coords : ",X, Y)
+		#print("coords : ",X, Y)
 		cle = whatCase(X,Y)
-		print("cle: ", cle)
+		#print("cle: ", cle)
 		if (cle != (-1,-1)):
 			if (getAvantDernierePiece(cle) >= 0):
-				print("faille dessous?:", genereFailleDessous(cle))
+				#print("faille dessous?:", genereFailleDessous(cle))
 				if(genereFailleDessous(cle) == False):
 					possible = True
 			else:
-				print("faille autour?:", genereFailleAutour(cle))
+				#print("faille autour?:", genereFailleAutour(cle))
 				if(genereFailleAutour(cle) == False):
 					possible = True
 
