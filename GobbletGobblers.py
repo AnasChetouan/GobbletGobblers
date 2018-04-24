@@ -7,7 +7,6 @@ import sys, time
 
 #____Variables globales_____
 
-peutFinir = False
 choix="menu"
 stop=False
 mode = "Joueur VS Ordinateur 2" #par défaut
@@ -324,7 +323,17 @@ def IAplus():
 								setCase(ligne[posTailleMin], 2, taillePiece) #On met les données dans le plateau
 								piecePlacee = True
 						else:
-							print("peut pas donc on attaque") #attaque
+							indicePiece = len(listePiecesIA2)-1
+							piece = listePiecesIA2[indicePiece]
+							taillePiece = taille(Canevas.coords(piece))
+							if (canAdd(saveCaseVide, taillePiece)):
+								del listePiecesIA[indicePiece]
+								placerPiece(saveCaseVide, taillePiece, listePiecesIA2[indicePiece])
+								listePiecesIA3.append(listePiecesIA2[indicePiece])
+								del listePiecesIA2[indicePiece]
+								setCase(saveCaseVide, 2, taillePiece)
+								piecePlacee = True
+
 					else:
 						print("PEUT PAS COUVRIR")
 						#print("case vide", saveCaseVide)
@@ -476,7 +485,7 @@ def StopForWin():
 	global listePiecesIA3
 	lignes = calculNbPiecesRougesVer2()
 	cleFinish = (-1, -1)
-	print("lignes finish", lignes)
+	#print("lignes finish", lignes)
 	for ligne in lignes:
 		dispo = []
 		dispo2 = []
@@ -513,8 +522,8 @@ def StopForWin():
 			dispo2 = listeCasesDispoSauf2(cle1, cle2, listePiecesIA2)
 			cleFinish = cle3
 
-		print("cle fin", cleFinish)
-		print("dispo", dispo)
+		#print("cle fin", cleFinish)
+		#print("dispo", dispo)
 		if (len(dispo2) != 0):
 			if(cleFinish != (-1,-1)):
 				for piece in dispo2:
@@ -528,7 +537,7 @@ def StopForWin():
 								setCase(cleFinish, 2, taillePiece)
 								return True
 
-		print("dispo2", dispo2)
+		#print("dispo2", dispo2)
 		if (len(dispo) != 0):
 			if(cleFinish != (-1,-1)):
 				for piece in dispo:
@@ -1059,8 +1068,7 @@ def Effacer():
 	Canevas.delete(ALL)
 
 def rejouer():
-	global victoire, coupsJ1, coupsJ2, couleurJoueur, listePiecesIA3, peutFinir
-	peutFinir = False
+	global victoire, coupsJ1, coupsJ2, couleurJoueur, listePiecesIA3
 	Effacer()
 	listePiecesIA3 = []
 	couleurJoueur='blue'
